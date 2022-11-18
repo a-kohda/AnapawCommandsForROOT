@@ -59,6 +59,36 @@ vector<double> globalvecdouble;
 GetXYbyClick   globalxyclick("globalxyclick");
 
 
+// 関数・クラスの実体記述部
+void hlist(){
+	//int n=5;
+	printf("\n  ===> Histogram List\n\n");
+	printf("    HID    Kind    Name\n\n");
+
+	TList* li = GetHistList();
+	int cidx = -1;
+	TString arrow;
+	if(gPad != nullptr){
+		cidx = li->IndexOf(gPad->GetListOfPrimitives()->At(1));
+	}
+	//printf("Current hist index is : %d\n",cidx);
+
+	for(int n=0;n < li->GetEntries();n++){
+		int kind=9;
+		TObject* obj = li->At(n);
+		if(obj->InheritsFrom("TH3")) { kind = 3; }
+		else if(obj->InheritsFrom("TH2")) { kind = 2; }
+		else if(obj->InheritsFrom("TH1")) { kind = 1; }
+	
+		if ( n == cidx ) { arrow = "->"; }
+		else { arrow = "  "; }
+		printf(" %s %3d    (%d)    %s\n", arrow.Data(), n, kind, obj->GetName());
+	}
+	//li->Delete();
+}
+
+
+
 // ubuntu14からのコピー
 
 // ROOTのバージョン選択(使わない方をコメントアウト)
@@ -226,32 +256,7 @@ void sly(){
         printf(" Draw ID:%3d  %s\n",li->IndexOf(firsth1),firsth1->GetName());
 }
 
-void hlist(){
-	//int n=5;
-	printf("\n  ===> Histogram List\n\n");
-	printf("    HID    Kind    Name\n\n");
 
-	TList* li = GetHistList();
-	int cidx = -1;
-	TString arrow;
-	if(gPad != nullptr){
-		cidx = li->IndexOf(gPad->GetListOfPrimitives()->At(1));
-	}
-	//printf("Current hist index is : %d\n",cidx);
-
-	for(int n=0;n < li->GetEntries();n++){
-		int kind=9;
-		TObject* obj = li->At(n);
-		if(obj->InheritsFrom("TH3")) { kind = 3; }
-		else if(obj->InheritsFrom("TH2")) { kind = 2; }
-		else if(obj->InheritsFrom("TH1")) { kind = 1; }
-	
-		if ( n == cidx ) { arrow = "->"; }
-		else { arrow = "  "; }
-		printf(" %s %3d    (%d)    %s\n", arrow.Data(), n, kind, obj->GetName());
-	}
-	//li->Delete();
-}
 
 
 
