@@ -18,10 +18,10 @@ void ht(int n, TString opt = defaultdrawopt); // n番目のhistをDraw (オプ�
 void ht(TString opt);        // 現在表示されているhistのoptionを変更して再Draw
 void hn(TString opt = defaultdrawopt);  // 現在表示されているhistの次のhistを表示
 void hb(TString opt = defaultdrawopt);  // 現在表示されているhistの前のhistを表示
-void fig();                 // 現在表示されているhistをGausianでfit (現在表示中の全範囲で)
-void lgy(); // y軸をログスケールにする
-void lny(); // y軸をリニアスケールにする
-void sly(); // 2次元のヒストグラムを
+void fig();                  // 現在表示されているhistをGausianでfit (現在表示中の全範囲で)
+void lgy();                  // y軸をログスケールにする
+void lny();                  // y軸をリニアスケールにする
+void sly(int n = -1);        // 2次元ヒストグラムをスライスしてy軸への射影
 
 // オリジナルのユーザー用関数
 TH1*  htp(int n = -1);        // 引数指定、または現在表示されているhistのポインタを返す
