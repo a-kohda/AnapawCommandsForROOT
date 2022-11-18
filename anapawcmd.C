@@ -113,15 +113,6 @@ void xgetvalx2(){
 
 
 
-// 関数記述部
-
-TH1* ht(int n, TString opt){ // n番目のhistをDraw (オプション指定)
-	TH1* h1 = (TH1*)GetHistList()->At(n);
-	h1->SetOption(opt);
-	h1->Draw();
-	return h1;
-}
-
 void ht(int n){ // n番目のhistをDraw (オプション維持)
 	TList* li = GetHistList();
 	TH1* h1 = (TH1*)li->At(n);
@@ -417,13 +408,7 @@ TH1* ht(int n, TString opt){ // n番目のhistをDraw (オプション指定)
 	return h1;
 }
 
-TH1* ht(int n){ // n番目のhistをDraw (オプション維持)
-	TList* li = GetHistList();
-	TH1* h1 = (TH1*)li->At(n);
-	//li->Delete();
-	h1->Draw();
-	return h1;
-}
+
 
 TH1* ht(){ // 現在表示されているhistのポインタを返すだけ ( ht()->Draw()的な使い方が出来るように )
 	TH1F *h1 = (TH1F*)gPad->GetListOfPrimitives()->At(1);
