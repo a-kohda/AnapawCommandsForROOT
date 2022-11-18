@@ -59,7 +59,9 @@ vector<double> globalvecdouble;
 GetXYbyClick   globalxyclick("globalxyclick");
 
 
-// 関数・クラスの実体記述部
+///////// 関数・クラスの実体記述部 //////////
+
+
 void hlist(){
 	//int n=5;
 	printf("\n  ===> Histogram List\n\n");
@@ -88,6 +90,17 @@ void hlist(){
 }
 
 
+void lny(){ // y軸をリニアスケールにする
+	gPad->SetLogy(0);
+}
+
+void lgy(){ // y軸をログスケールにする
+	gPad->SetLogy(1);
+}
+
+
+
+///////////// 以下、未整理 ///////////////
 
 // ubuntu14からのコピー
 
@@ -227,14 +240,6 @@ void xrange(){ // (オリジナル) 現在表示されているhistのx軸の表
 	TH1F *h1 = (TH1F*)gPad->GetListOfPrimitives()->At(1);
 	h1->GetXaxis()->UnZoom();
 	h1->Draw("same");
-}
-
-void lny(){ // y軸をリニアスケールにする
-	gPad->SetLogy(0);
-}
-
-void lgy(){ // y軸をログスケールにする
-	gPad->SetLogy(1);
 }
 
 
@@ -502,13 +507,6 @@ void xrange(){ // (オリジナル) 現在表示されているhistのx軸の表
 	h1->Draw("same");
 }
 
-void lny(){ // y軸をリニアスケールにする
-	gPad->SetLogy(0);
-}
-
-void lgy(){ // y軸をログスケールにする
-	gPad->SetLogy(1);
-}
 
 
 
