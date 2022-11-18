@@ -113,12 +113,6 @@ void xgetvalx2(){
 
 
 
-void xfigali(){
-	printf("Click a Start and End point of fit range!\n");
-	xgetvalx(2);
-	figali(globalxvaldata.x[0], globalxvaldata.x[1]);
-}
-
 // 関数記述部
 
 TH1* ht(int n, TString opt){ // n番目のhistをDraw (オプション指定)
