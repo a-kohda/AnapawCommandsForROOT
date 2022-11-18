@@ -40,7 +40,7 @@ class GetXYbyClick {         // マウスを使って点の取得を行う
 	private:
 		int maxnum; // 取得する最大数
 		TString name;
-		vector<float> x; // 変数を持つ構造体のvectorに変更したい
+		vector<float> x; // 2変数を持つ構造体のvectorに変更したい
 		vector<float> y;
 	public:
 		GetXYbyClick(TString aname);
