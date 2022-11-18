@@ -28,8 +28,8 @@ void sly(int n = -1);        // 2次元ヒストグラムをスライスしてy�
 TH1*  htp(int n = -1);        // 引数指定、または現在表示されているhistのポインタを返す
 void  xrange(float xmin, float xmax);
 void  xrange();
-float figali(float xmin, float xmax, bool oldel =true, bool print = true, int kreturn =0, TH1* ihist = 0x0 );
-void  xfigali();
+float figl(float xmin, float xmax, bool oldel =true, bool print = true, int kreturn =0, TH1* ihist = 0x0 );
+void  xfitgl();
 
 
 // このマクロ内で使用する関数
