@@ -19,6 +19,7 @@ void ht(TString opt);        // 現在表示されているhistのoptionを変�
 void hn(TString opt = defaultdrawopt);  // 現在表示されているhistの次のhistを表示
 void hb(TString opt = defaultdrawopt);  // 現在表示されているhistの前のhistを表示
 void fig();                  // 現在表示されているhistをGausianでfit (現在表示中の全範囲で)
+//void xfitg();              // マウスで最大、最小を指定してGausianでfit
 void lgy();                  // y軸をログスケールにする
 void lny();                  // y軸をリニアスケールにする
 void sly(int n = -1);        // 2次元ヒストグラムをスライスしてy軸への射影
