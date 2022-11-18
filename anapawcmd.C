@@ -183,36 +183,9 @@ void xgetvalx2(){
 
 
 
-void ht(int n){ // n番目のhistをDraw (オプション維持)
-	TList* li = GetHistList();
-	TH1* h1 = (TH1*)li->At(n);
-// なぜか2回目にDrawした時にstat boxのサイズが変わってしまうのを防ぐ措置
-TPaveStats *st = (TPaveStats*)h1->FindObject("stats");
-bool statexist = false;
-float staty1ndc;
-if(st!=0x0){
- staty1ndc = st->GetY1NDC();
- statexist = true;
-}	
-	h1->UseCurrentStyle();
-	if(gPad == 0x0) TCanvas *c1 = new TCanvas();
-if(statexist) st->SetY1NDC(staty1ndc);
-	h1->Draw(defaultdrawoption);
-	printf(" Draw ID:%3d  %s\n",li->IndexOf(h1),h1->GetName());
-	//return h1;
-}
 
-TH1* ht(){ // 現在表示されているhistのポインタを返すだけ ( ht()->Draw()的な使い方が出来るように )
-	TH1F *h1 = (TH1F*)gPad->GetListOfPrimitives()->At(1);
-	return h1;
-}
 
-TH1* ht(TString opt){ // 現在表示されているhistのoptionを変更して再Draw
-	TH1F *h1 = (TH1F*)gPad->GetListOfPrimitives()->At(1);
-	h1->SetOption(opt);
-	h1->Draw();
-	return h1;
-}
+
 
 
 TH1* hn(TString opt){ // 現在表示されているhistの次のhistを表示
