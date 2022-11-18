@@ -102,7 +102,24 @@ void ht(int n, TString opt){
 	h1->UseCurrentStyle(); // style を強制適用
 	if(gPad == 0x0) TCanvas *c1 = new TCanvas(); // キャンバスがない場合、生成
 	if(statexist) st->SetY1NDC(staty1ndc);
-	h1->Draw(defaultdrawopt);
+	h1->Draw(opt);
+	printf(" Draw ID:%3d  %s\n",li->IndexOf(h1),h1->GetName());
+}
+
+void ht(TString opt){
+	TH1* h1 = (TH1*)htp();
+	if(h1 == 0x0) return;
+	// 後は上と同じ
+	TPaveStats *st = (TPaveStats*)h1->FindObject("stats");
+	bool  statexist = false;
+	float staty1ndc;
+	if(st!=0x0){
+		staty1ndc = st->GetY1NDC();
+		statexist = true;
+	}	
+	h1->UseCurrentStyle(); // style を強制適用
+	if(statexist) st->SetY1NDC(staty1ndc);
+	h1->Draw(opt);
 	printf(" Draw ID:%3d  %s\n",li->IndexOf(h1),h1->GetName());
 }
 
