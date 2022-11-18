@@ -70,25 +70,41 @@ void hlist(){
 	TList* li = GetHistList();
 	int cidx = -1;
 	TString arrow;
-	if(gPad != nullptr){
-		cidx = li->IndexOf(gPad->GetListOfPrimitives()->At(1));
+	if(gPad != 0x0 ){
+		if(gPad->GetListOfPrimitives()->At(1) != 0x0 ){
+			cidx = li->IndexOf(gPad->GetListOfPrimitives()->At(1));
+		}
 	}
 	//printf("Current hist index is : %d\n",cidx);
-
 	for(int n=0;n < li->GetEntries();n++){
 		int kind=9;
 		TObject* obj = li->At(n);
 		if(obj->InheritsFrom("TH3")) { kind = 3; }
 		else if(obj->InheritsFrom("TH2")) { kind = 2; }
 		else if(obj->InheritsFrom("TH1")) { kind = 1; }
-	
 		if ( n == cidx ) { arrow = "->"; }
 		else { arrow = "  "; }
 		printf(" %s %3d    (%d)    %s\n", arrow.Data(), n, kind, obj->GetName());
 	}
-	//li->Delete();
 }
 
+void ht(int n, TString opt){
+	TList* li = GetHistList();
+	TH1* h1 = (TH1*)li->At(n);
+	// なぜか2回目にDrawした時にstat boxのサイズ(y方向のみ)が変わってしまうのを防ぐ措置
+	TPaveStats *st = (TPaveStats*)h1->FindObject("stats");
+	bool  statexist = false;
+	float staty1ndc;
+	if(st!=0x0){
+		staty1ndc = st->GetY1NDC();
+		statexist = true;
+	}	
+	h1->UseCurrentStyle(); // style を強制適用
+	if(gPad == 0x0) TCanvas *c1 = new TCanvas(); // キャンバスがない場合、生成
+	if(statexist) st->SetY1NDC(staty1ndc);
+	h1->Draw(defaultdrawopt);
+	printf(" Draw ID:%3d  %s\n",li->IndexOf(h1),h1->GetName());
+}
 
 void lny(){ // y軸をリニアスケールにする
 	gPad->SetLogy(0);
