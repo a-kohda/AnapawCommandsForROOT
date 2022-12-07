@@ -46,6 +46,8 @@ int  GetObjID(TObject* o1);  // ヒスト等のオブジェクトがリストの
 TList* GetHistList();        // .lsで表示されるオブジェクトのリスト
 void DrawHist(TH1* h1, TString opt);
 //void DeleteObjFromGPad(TString name); // gPad上にある(TGraphなどの)オブジェクトを消す(nameで指定)
+void SetAPStyle();           // Histの見栄えをANAPAWっぽいstyleにする
+
 
 
 ///////// 関数・クラスの実体記述部 //////////
@@ -139,4 +141,37 @@ void lgy(){ gPad->SetLogy(1); }
 void lnz(){ gPad->SetLogz(0); }
 void lgz(){ gPad->SetLogz(1); }
 
+
+void SetAPStyle(){
+	// Font setting
+	int fontid=22; // Times系フォント
+	gStyle->SetStatFont(fontid);
+	gStyle->SetLabelFont(fontid,"XYZ");
+	gStyle->SetLabelFont(fontid,"");
+	gStyle->SetTitleFont(fontid,"XYZ");
+	gStyle->SetTitleFont(fontid,"");
+	gStyle->SetTextFont(fontid);
+	gStyle->SetLegendFont(fontid);
+
+	// Copy from ANAROOT
+	gStyle->SetHistFillColor(7);
+	gStyle->SetHistFillStyle(3001);
+	gStyle->SetHistLineColor(kBlue);
+	gStyle->SetFuncColor(kRed);
+	gStyle->SetFrameLineWidth(2);
+	gStyle->SetPadGridX(1);
+	gStyle->SetPadGridY(1);
+	gStyle->SetCanvasColor(0);
+	gStyle->SetTitleFillColor(0);
+	gStyle->SetTitleStyle(0);
+	gStyle->SetStatColor(0);
+	gStyle->SetStatStyle(0);
+	gStyle->SetStatX(0.9);  
+	gStyle->SetStatY(0.9);  
+	gStyle->SetPalette(1);
+	gStyle->SetOptLogz(1);
+	gStyle->SetOptFit(1);
+	gStyle->SetOptStat(1111111);
+	gStyle->SetPadBorderMode(1);
+}
 
