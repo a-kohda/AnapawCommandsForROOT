@@ -132,6 +132,7 @@ void DrawHist(TH1* h1, TString opt = defaultdrawopt){
 	if(statexist) st->SetY1NDC(staty1ndc);
 	h1->Draw(opt);
 	printf(" Draw ID:%3d  %s\n",GetObjID(h1),h1->GetName());
+  defaultdrawopt = opt;
 }
 
 void lnx(){ gPad->SetLogx(0); }
