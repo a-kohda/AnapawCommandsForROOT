@@ -3,40 +3,49 @@
 // Last Updated 2022.12.7 by A. Kohda 
 
 
-// sahoにある版と、ubuntu16にある版を統合する
-// root5/6の切り替えを不要にする
-// sahoにあるeucalib.cxxのGetXYbyClickを導入する
-// 全体的に可読性を良くする
-
-// デフォルトの変数設定
+// グローバル変数の定義
 TString defaultdrawopt = "colz"; 
+vector<double> gDoubleVec;
 
 // ANAPAW準拠のユーザー用関数
+// 基本操作用の関数
 void hlist();                // Index番号付きでヒストグラムのリストを表示する
 void (*ls)() = hlist;        // "hlist()"は"ls()"でも可
 void ht(int n, TString opt); // n番目のhistをDraw (オプション指定あり)
 void ht(TString opt);        // 現在表示されているhistのoptionを変更して再Draw
 void hn(TString opt);        // 現在表示されているhistの次のhistを表示
 void hb(TString opt);        // 現在表示されているhistの前のhistを表示
+
+// フィッティング系
 void fig();                  // 現在表示されているhistをGausianでfit (現在表示中の全範囲で)
 void xfitg();                // マウスで最大、最小を指定してGausianでfit
+void fitgl(float xmin, float xmax); // gaus+直線でfit
+void xfitgl();
+void fiterf(float xmin, float xmax); // 誤差関数でfit
+
+// 表示調整系
+void lgx();                  // x軸をログスケールにする
+void lnx();                  // x軸をリニアスケールにする
 void lgy();                  // y軸をログスケールにする
 void lny();                  // y軸をリニアスケールにする
+void lgz();                  // z軸をログスケールにする
+void lnz();                  // z軸をリニアスケールにする
+
+// 2次元 -> 1次元
 void sly(int n = -1);        // 2次元ヒストグラムをスライスしてy軸への射影
 
 // オリジナルのユーザー用関数
-TH1*  htp(int n = -1);        // 引数指定、または現在表示されているhistのポインタを返す
+TH1*  htp(int n = -1);        // HID指定、または現在表示されているhistのポインタを返す
 void  xrange(float xmin, float xmax);
 void  xrange();
-float figl(float xmin, float xmax, bool oldel =true, bool print = true, int kreturn =0, TH1* ihist = 0x0 );
-void  xfitgl();
 
 
 // このマクロ内で使用する関数
 TH1* GetCurrentHist();       // 現在表示されているhistのポインタを返す
 int  GetObjID(TObject* o1);  // ヒスト等のオブジェクトがリストの何番目にあるかを返す
-TList* GetHistList();
-void DrawHist(TH1* h1, TString opt = defaultdrawopt);
+TList* GetHistList();        // .lsで表示されるオブジェクトのリスト
+void DrawHist(TH1* h1, TString opt);
+void DeleteObjFromGPad(TString name); // gPad上にある(TGraphなどの)オブジェクトを消す(nameで指定)
 class GetXYbyClick {         // マウスを使って点の取得を行う
 	private:
 		int maxnum; // 取得する最大数
@@ -56,7 +65,6 @@ class GetXYbyClick {         // マウスを使って点の取得を行う
 };
 
 // マクロ内で使うグローバル変数
-vector<double> globalvecdouble;
 GetXYbyClick   globalxyclick("globalxyclick");
 
 
@@ -117,13 +125,12 @@ void DrawHist(TH1* h1, TString opt = defaultdrawopt){
 	printf(" Draw ID:%3d  %s\n",GetObjID(h1),h1->GetName());
 }
 
-void lny(){ // y軸をリニアスケールにする
-	gPad->SetLogy(0);
-}
-
-void lgy(){ // y軸をログスケールにする
-	gPad->SetLogy(1);
-}
+void lnx(){ gPad->SetLogx(0); }
+void lgx(){ gPad->SetLogx(1); }
+void lny(){ gPad->SetLogy(0); }
+void lgy(){ gPad->SetLogy(1); }
+void lnz(){ gPad->SetLogz(0); }
+void lgz(){ gPad->SetLogz(1); }
 
 
 
