@@ -69,6 +69,20 @@ int GetObjID(TObject* o1){
 	return cidx; 
 }
 
+TList* GetHistList(){
+	TList *li = new TList();
+	if(gDirectory->GetListOfKeys() != 0x0){
+		for(int i=0; i< gDirectory->GetListOfKeys()->GetEntries(); i++){
+			li->Add(gROOT->FindObject(gDirectory->GetListOfKeys()->At(i)->GetName()));
+		}
+	}
+
+	for(int i=0; i< gROOT->GetList()->GetEntries(); i++){
+		li->Add(gROOT->GetList()->At(i));
+	}
+	return li;
+}
+
 void hlist(){
 	printf("\n  ===> Histogram List\n\n");
 	printf("    HID    Kind    Name\n\n");
