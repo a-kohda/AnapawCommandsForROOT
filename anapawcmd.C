@@ -35,7 +35,7 @@ void lnz();                  // z軸をリニアスケールにする
 //void sly(int n = -1);        // 2次元ヒストグラムをスライスしてy軸への射影
 
 // オリジナルのユーザー用関数
-TH1*  htp(int n = -1);        // HID指定、または現在表示されているhistのポインタを返す
+//TH1*  htp(int n = -1);        // HID指定、または現在表示されているhistのポインタを返す
 //void  xrange(float xmin, float xmax);
 //void  xrange();
 
@@ -111,7 +111,7 @@ void ht(int n, TString opt = defaultdrawopt){
 }
 
 void ht(TString opt){
-	TH1* h1 = (TH1*)htp();
+	TH1* h1 = (TH1*)GetCurrentHist();
 	if(h1 == 0x0) return;
 	DrawHist(h1, opt);
 }
