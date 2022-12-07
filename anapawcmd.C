@@ -1,6 +1,6 @@
 // ANAPAW Commands for ROOT
-// Version 1.0
-// Last Updated 2022.11.16 by A. Kohda 
+// Version 0.9
+// Last Updated 2022.12.7 by A. Kohda 
 
 
 // sahoにある版と、ubuntu16にある版を統合する
@@ -14,12 +14,12 @@ TString defaultdrawopt = "colz";
 // ANAPAW準拠のユーザー用関数
 void hlist();                // Index番号付きでヒストグラムのリストを表示する
 void (*ls)() = hlist;        // "hlist()"は"ls()"でも可
-void ht(int n, TString opt = defaultdrawopt); // n番目のhistをDraw (オプション指定あり)
+void ht(int n, TString opt); // n番目のhistをDraw (オプション指定あり)
 void ht(TString opt);        // 現在表示されているhistのoptionを変更して再Draw
-void hn(TString opt = defaultdrawopt);  // 現在表示されているhistの次のhistを表示
-void hb(TString opt = defaultdrawopt);  // 現在表示されているhistの前のhistを表示
+void hn(TString opt);        // 現在表示されているhistの次のhistを表示
+void hb(TString opt);        // 現在表示されているhistの前のhistを表示
 void fig();                  // 現在表示されているhistをGausianでfit (現在表示中の全範囲で)
-//void xfitg();              // マウスで最大、最小を指定してGausianでfit
+void xfitg();                // マウスで最大、最小を指定してGausianでfit
 void lgy();                  // y軸をログスケールにする
 void lny();                  // y軸をリニアスケールにする
 void sly(int n = -1);        // 2次元ヒストグラムをスライスしてy軸への射影
@@ -89,7 +89,7 @@ void hlist(){
 	}
 }
 
-void ht(int n, TString opt){
+void ht(int n, TString opt = defaultdrawopt){
 	TList* li = GetHistList();
 	TH1* h1 = (TH1*)li->At(n);
 	DrawHist(h1, opt);
