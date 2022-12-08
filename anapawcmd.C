@@ -108,8 +108,8 @@ void hlist(){
 void ht(int n, TString opt = defaultdrawopt){
 	TList* li = GetHistList();
 	TH1* h1 = (TH1*)li->At(n);
-	if(h1 == 0x0){
-		printf(" %d do not exist\n", n);
+	if(h1 == 0x0 || ! h1->InheritsFrom("TH1") ){
+		printf(" %d do not exist or not histgram\n", n);
 		return;
 	}
 	DrawHist(h1, opt);
