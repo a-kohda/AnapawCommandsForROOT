@@ -93,7 +93,6 @@ void hlist(){
 	int cidx = GetObjID(GetCurrentHist(true));
 	TString arrow;
 
-
 	for(int n=0;n < li->GetEntries();n++){
 		int kind=9;
 		TObject* obj = li->At(n);
