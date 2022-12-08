@@ -87,7 +87,7 @@ TList* GetHistList(){
 
 void hlist(){
 	printf("\n  ===> Histogram List\n\n");
-	printf("    HID    Kind    Name\n\n");
+	printf("    HID    Kind    Title\n\n");
 
 	TList* li = GetHistList();
 	int cidx = GetObjID(GetCurrentHist(true));
@@ -102,13 +102,17 @@ void hlist(){
 		else if(obj->InheritsFrom("TH1")) { kind = 1; }
 		if ( n == cidx ) { arrow = "->"; }
 		else { arrow = "  "; }
-		printf(" %s %3d    (%d)    %s\n", arrow.Data(), n, kind, obj->GetName());
+		printf(" %s %3d    (%d)    %s\n", arrow.Data(), n, kind, obj->GetTitle());
 	}
 }
 
 void ht(int n, TString opt = defaultdrawopt){
 	TList* li = GetHistList();
 	TH1* h1 = (TH1*)li->At(n);
+	if(h1 == 0x0){
+		printf(" %d do not exist\n", n);
+		return;
+	}
 	DrawHist(h1, opt);
 }
 
@@ -131,7 +135,7 @@ void DrawHist(TH1* h1, TString opt = defaultdrawopt){
 	if(gPad == 0x0) TCanvas *c1 = new TCanvas(); // キャンバスがない場合、生成
 	if(statexist) st->SetY1NDC(staty1ndc);
 	h1->Draw(opt);
-	printf(" Draw ID:%3d  %s\n",GetObjID(h1),h1->GetName());
+	printf(" Draw ID:%3d  %s\n",GetObjID(h1),h1->GetTitle());
   defaultdrawopt = opt;
 }
 
