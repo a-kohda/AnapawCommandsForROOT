@@ -179,6 +179,31 @@ void lnz(){ gPad->SetLogz(0); }
 void lgz(){ gPad->SetLogz(1); }
 
 
+void sly(){ // 今後の予定として、引数に、分割数、hist idの配置(直後か最後か)
+	TH2D* h2 = (TH2D*)GetCurrentHist();
+	if( h2==0x0 ) { return; }
+	if( ! h2->InheritsFrom("TH2") ) { 
+		printf(" not 2d hist\n");
+		return;
+	}
+	TString ptitle = h2->GetTitle();
+	int binnum = h2->GetNbinsX(); // 引数指定がなければbin numで分割する
+	TH1D* firsth1;
+	for(int i=0;i<binnum;i++){
+		TH1D* h1 = h2->ProjectionY(Form("%s_sly%d",ptitle.Data(),i+1),i+1,i+1);
+		float xstart = h2->GetXaxis()->GetBinLowEdge(i+1);
+		float xend   = xstart + h2->GetXaxis()->GetBinWidth(i+1);
+		h1->SetTitle(Form("%s sly%d (x = %#6g : %#6g)",ptitle.Data(),i+1,xstart,xend));
+		gDirectory->GetListOfKeys()->AddLast(h1);
+		if(i==0) firsth1 = h1;
+	}
+	DrawHist(firsth1);
+	//firsth1->Draw();
+	//TList* li = GetHistList();
+	//printf(" Draw ID:%3d  %s\n",li->IndexOf(firsth1),firsth1->GetName());
+}
+
+
 void SetAPStyle(){
 	// Font setting
 	int fontid=22; // Times系フォント

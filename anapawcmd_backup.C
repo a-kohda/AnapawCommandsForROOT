@@ -2,6 +2,7 @@
 // Version 0.9
 // Last Updated 2022.12.7 by A. Kohda 
 
+// saho/sahoRIBF142/scripts/eucalib.cxx にも参考コードあり
 
 // グローバル変数の定義
 TString defaultdrawopt = "colz"; 
