@@ -104,7 +104,7 @@ void hlist(){
 		if (obj->InheritsFrom("TH1")){
 			printf(" %s %3d    (%d)    %s\n", arrow.Data(), n, kind, obj->GetTitle());
 		}else{
-			printf(" %s %3d    (%d)    %s;%s\n", arrow.Data(), n, kind, obj->GetName(),obj->GetTitle());
+			printf(" %s %3d    (%d)    %s; %s\n", arrow.Data(), n, kind, obj->GetName(),obj->GetTitle());
 		}
 	}
 }
