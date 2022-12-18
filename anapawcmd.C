@@ -124,7 +124,6 @@ void ht(TString opt){
 void hn(TString opt = defaultdrawopt){
 	TH1* h1 = (TH1*)GetCurrentHist(true);
 	int currentHID = GetObjID(h1); // リストにない場合は -1 が入るはず。
-
 	TList* li = GetHistList();
 	TH1* h1_2;
 	while(1){
@@ -139,11 +138,26 @@ void hn(TString opt = defaultdrawopt){
 		}
 	}
 	DrawHist(h1_2, opt);
-
-
 }
-//void hb(TString opt);
 
+void hn(TString opt = defaultdrawopt){
+	TH1* h1 = (TH1*)GetCurrentHist(true);
+	int currentHID = GetObjID(h1); // リストにない場合は -1 が入るはず。
+	TList* li = GetHistList();
+	TH1* h1_2;
+	while(1){
+		h1_2 = (TH1*)li->At(currentHID-1);
+		if(h1_2 != 0x0 &&  h1_2 ->InheritsFrom("TH1")  ){
+			break;
+		}
+		if(currentHID > 0 ){
+			currentHID --;
+		}else{
+			currentHID = li->GetEntries();
+		}
+	}
+	DrawHist(h1_2, opt);
+}
 
 
 void DrawHist(TH1* h1, TString opt = defaultdrawopt){
