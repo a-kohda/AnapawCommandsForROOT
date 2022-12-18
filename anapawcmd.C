@@ -129,7 +129,7 @@ void hn(TString opt = defaultdrawopt){
 	TH1* h1_2;
 	while(1){
 		h1_2 = (TH1*)li->At(currentHID+1);
-		if(h1_2 != 0x0 &&  h1_2 ->InheritsFrom("TH1") && li->GetEntries() ){
+		if(h1_2 != 0x0 &&  h1_2 ->InheritsFrom("TH1")  ){
 			break;
 		}
 		if(currentHID < li->GetEntries() ){
@@ -138,7 +138,7 @@ void hn(TString opt = defaultdrawopt){
 			currentHID = -1;
 		}
 	}
-	DrawHist(h1, opt);
+	DrawHist(h1_2, opt);
 
 
 }
