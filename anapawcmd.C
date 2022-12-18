@@ -122,7 +122,7 @@ void ht(TString opt){
 }
 
 void hn(TString opt = defaultdrawopt){
-	TH1* h1 = (TH1*)GetCurrentHist();
+	TH1* h1 = (TH1*)GetCurrentHist(true);
 	int currentHID = GetObjID(h1); // リストにない場合は -1 が入るはず。
 
 	TList* li = GetHistList();
