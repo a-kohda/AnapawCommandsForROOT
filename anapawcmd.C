@@ -57,7 +57,7 @@ TH1* GetCurrentHist(bool quiet = false){
 	TH1* h1;
 	if( gPad == 0x0 ){
 		h1 = 0x0;
-		if(!quiet) fprintf(stderr, "Warning! No current Histgram !\n");
+		if(!quiet) fprintf(stderr, " Warning ! No current Histgram !\n");
 	}else{
 		h1 = (TH1*)gPad->GetListOfPrimitives()->At(1);
 	}
@@ -68,7 +68,7 @@ int GetObjID(TObject* o1){
 	TList* li = GetHistList();
 	int cidx = -1;
 	cidx = li->IndexOf(o1);
-	return cidx; 
+	return cidx; // ない場合は -1 を返す(テスト済み)
 }
 
 TList* GetHistList(){
@@ -120,6 +120,31 @@ void ht(TString opt){
 	if(h1 == 0x0) return;
 	DrawHist(h1, opt);
 }
+
+void hn(TString opt = defaultdrawopt){
+	TH1* h1 = (TH1*)GetCurrentHist();
+	int currentHID = GetObjID(h1); // リストにない場合は -1 が入るはず。
+
+	TList* li = GetHistList();
+	TH1* h1_2;
+	while(1){
+		h1_2 = (TH1*)li->At(currentHID+1);
+		if(h1_2 != 0x0 &&  h1_2 ->InheritsFrom("TH1") && li->GetEntries() ){
+			break;
+		}
+		if(currentHID < li->GetEntries() ){
+			currentHID ++;
+		}else{
+			currentHID = -1;
+		}
+	}
+	DrawHist(h1, opt);
+
+
+}
+//void hb(TString opt);
+
+
 
 void DrawHist(TH1* h1, TString opt = defaultdrawopt){
 	// なぜか2回目にDrawした時にstat boxのサイズ(y方向のみ)が変わってしまうのを防ぐ措置
