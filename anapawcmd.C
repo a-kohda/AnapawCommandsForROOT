@@ -101,7 +101,11 @@ void hlist(){
 		else if(obj->InheritsFrom("TH1")) { kind = 1; }
 		if ( n == cidx ) { arrow = "->"; }
 		else { arrow = "  "; }
-		printf(" %s %3d    (%d)    %s\n", arrow.Data(), n, kind, obj->GetTitle());
+		if (obj->InheritsFrom("TH1")){
+			printf(" %s %3d    (%d)    %s\n", arrow.Data(), n, kind, obj->GetTitle());
+		}else{
+			printf(" %s %3d    (%d)    %s\n", arrow.Data(), n, kind, obj->GetName());
+		}
 	}
 }
 
@@ -128,14 +132,9 @@ void hn(TString opt = defaultdrawopt){
 	TH1* h1_2;
 	while(1){
 		h1_2 = (TH1*)li->At(currentHID+1);
-		if(h1_2 != 0x0 &&  h1_2 ->InheritsFrom("TH1")  ){
-			break;
-		}
-		if(currentHID < li->GetEntries() ){
-			currentHID ++;
-		}else{
-			currentHID = -1;
-		}
+		if(h1_2 != 0x0 &&  h1_2 ->InheritsFrom("TH1")  ){ break; }
+		if(currentHID < li->GetEntries() ){ currentHID ++; }
+		else{ currentHID = -1; }
 	}
 	DrawHist(h1_2, opt);
 }
@@ -147,14 +146,9 @@ void hb(TString opt = defaultdrawopt){
 	TH1* h1_2;
 	while(1){
 		h1_2 = (TH1*)li->At(currentHID-1);
-		if(h1_2 != 0x0 &&  h1_2 ->InheritsFrom("TH1")  ){
-			break;
-		}
-		if(currentHID > 0 ){
-			currentHID --;
-		}else{
-			currentHID = li->GetEntries();
-		}
+		if(h1_2 != 0x0 &&  h1_2 ->InheritsFrom("TH1")  ){ break; }
+		if(currentHID > 0 ){ currentHID --; }
+		else{ currentHID = li->GetEntries(); }
 	}
 	DrawHist(h1_2, opt);
 }
