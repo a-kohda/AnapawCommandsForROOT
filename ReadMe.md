@@ -5,9 +5,9 @@
 ### 設定
 - anapawcmd.C をダウンロードして適当なところに設置してください。
 - ROOT起動後に .L /path/to/anapawcmd.C とすると読み込まれて、コマンドが使えるようになります。
-- 自動読み込みを設定する場合はrootlogon.Cに以下のように追記します。
+- 自動読み込みを設定する場合はrootlogon.Cに以下を追記します。
 ```
-gROOT->ProcessLine(".L /home/kohda/.rootmacros/AnapawCommandsForROOT/anapawcmd.C");
+gROOT->ProcessLine(".L /path/to/anapawcmd.C");
 gROOT->ProcessLine("SetAPStyle();");
 ```
 ### 利用可能なコマンド一覧 
