@@ -10,8 +10,8 @@
 - hn() / hb()
   - 現在表示中のヒストグラムの次の(/前の)ヒストグラムを表示する。引数でDraw optionの指定可。
 
-- lgx() / lgy() /lgz()
+- lgx() / lgy() / lgz()
   - x / y / z 軸をLogスケールにする
 
-- lnx() / lny() /lnz()
+- lnx() / lny() / lnz()
   - x / y / z 軸をリニアスケールにする
