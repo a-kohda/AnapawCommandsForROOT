@@ -177,7 +177,17 @@ void lnz(){ gPad->SetLogz(0); }
 void lgz(){ gPad->SetLogz(1); }
 
 // ここから開発中関数
-void sly(){ // 今後の予定として、引数に、分割数、hist idの配置(直後か最後か)
+void S_slXorY(int axis, int div=-1, bool ira = false){ 
+	// div : 分割数
+	// ira : insert right after。ANAPAWのようにHIDを直後に挿入する場合true。
+	//       ここでは既存のHIDを変更しないようにlistの最後に挿入するモードを
+	//       デフォルトにしている。
+	// axis 1:x, 2:y
+	if(axis != 1 && axis != 2) {
+		printf("Input Error!\n");
+		return;
+	}
+
 	TH2D* h2 = (TH2D*)GetCurrentHist();
 	if( h2==0x0 ) { return; }
 	if( ! h2->InheritsFrom("TH2") ) { 
@@ -185,10 +195,14 @@ void sly(){ // 今後の予定として、引数に、分割数、hist idの配�
 		return;
 	}
 	TString ptitle = h2->GetTitle(); // TitleではなくNameを使う必要あり。要改善
+	TString pname  = h2->GetName(); // TitleではなくNameを使う必要あり。要改善
 	int binnum = h2->GetNbinsX(); // 引数指定がなければbin numで分割する
 	TH1D* firsth1;
 	for(int i=0;i<binnum;i++){
-		TH1D* h1 = h2->ProjectionY(Form("%s_sly%d",ptitle.Data(),i+1),i+1,i+1);
+		while( gROOT->FindObject(Form("%s_sly%d",pname.Data(),i+1)) != 0x0 ) {
+			pname += "_"; // nameが重複する場合"_"をもう一個足す。
+		}
+		TH1D* h1 = h2->ProjectionY(Form("%s_sly%d",pname.Data(),i+1),i+1,i+1);
 		float xstart = h2->GetXaxis()->GetBinLowEdge(i+1);
 		float xend   = xstart + h2->GetXaxis()->GetBinWidth(i+1);
 		h1->SetTitle(Form("%s sly%d (x = %#6g : %#6g)",ptitle.Data(),i+1,xstart,xend));
@@ -197,6 +211,9 @@ void sly(){ // 今後の予定として、引数に、分割数、hist idの配�
 	}
 	DrawHist(firsth1);
 }
+
+//void slx(){ S_slXorY(1); }
+void sly(){ S_slXorY(2); }
 
 void blowx(float xmin, float xmax){ // ANAROOT準拠。旧バージョンのxrange。
 	TH1 *h1 = (TH1*)GetCurrentHist();
