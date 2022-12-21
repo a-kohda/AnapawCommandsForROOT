@@ -92,17 +92,18 @@ void hlist(){
 	TString arrow;
 
 	for(int n=0;n < li->GetEntries();n++){
-		int kind=9;
+		char kind='S';
 		TObject* obj = li->At(n);
-		if(obj->InheritsFrom("TH3")) { kind = 3; }
-		else if(obj->InheritsFrom("TH2")) { kind = 2; }
-		else if(obj->InheritsFrom("TH1")) { kind = 1; }
+		if     (obj->InheritsFrom("TH3"))   { kind = '3'; }
+		else if(obj->InheritsFrom("TH2"))   { kind = '2'; }
+		else if(obj->InheritsFrom("TH1"))   { kind = '1'; }
+		else if(obj->InheritsFrom("TTree")) { kind = 'T'; }
 		if ( n == cidx ) { arrow = "->"; }
 		else { arrow = "  "; }
 		if (obj->InheritsFrom("TH1")){
-			printf(" %s %3d    (%d)    %s\n", arrow.Data(), n, kind, obj->GetTitle());
+			printf(" %s %3d    (%c)    %s\n", arrow.Data(), n, kind, obj->GetTitle());
 		}else{
-			printf(" %s %3d    (%d)    %s; %s\n", arrow.Data(), n, kind, obj->GetName(),obj->GetTitle());
+			printf(" %s %3d    (%c)    %s; %s\n", arrow.Data(), n, kind, obj->GetName(),obj->GetTitle());
 		}
 	}
 }
