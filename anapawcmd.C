@@ -36,8 +36,6 @@ void lnz();                  // z軸をリニアスケールにする
 
 // オリジナルのユーザー用関数
 //TH1*  htp(int n = -1);        // HID指定、または現在表示されているhistのポインタを返す
-//void  xrange(float xmin, float xmax);
-//void  xrange();
 
 
 // このマクロ内で使用する関数
@@ -186,7 +184,7 @@ void sly(){ // 今後の予定として、引数に、分割数、hist idの配�
 		printf(" not 2d hist\n");
 		return;
 	}
-	TString ptitle = h2->GetTitle();
+	TString ptitle = h2->GetTitle(); // TitleではなくNameを使う必要あり。要改善
 	int binnum = h2->GetNbinsX(); // 引数指定がなければbin numで分割する
 	TH1D* firsth1;
 	for(int i=0;i<binnum;i++){
