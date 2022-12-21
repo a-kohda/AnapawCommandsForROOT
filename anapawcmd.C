@@ -178,7 +178,7 @@ void lgy(){ gPad->SetLogy(1); }
 void lnz(){ gPad->SetLogz(0); }
 void lgz(){ gPad->SetLogz(1); }
 
-
+// ここから開発中関数
 void sly(){ // 今後の予定として、引数に、分割数、hist idの配置(直後か最後か)
 	TH2D* h2 = (TH2D*)GetCurrentHist();
 	if( h2==0x0 ) { return; }
@@ -198,11 +198,49 @@ void sly(){ // 今後の予定として、引数に、分割数、hist idの配�
 		if(i==0) firsth1 = h1;
 	}
 	DrawHist(firsth1);
-	//firsth1->Draw();
-	//TList* li = GetHistList();
-	//printf(" Draw ID:%3d  %s\n",li->IndexOf(firsth1),firsth1->GetName());
 }
 
+void blowx(float xmin, float xmax){ // ANAROOT準拠。旧バージョンのxrange。
+	TH1 *h1 = (TH1*)GetCurrentHist();
+	if(h1 == 0x0) return;
+	h1->GetXaxis()->SetRangeUser(xmin,xmax);
+	gPad->Modified();
+}
+
+void blowx(){ // 引数なしバージョンはunzoom
+	TH1 *h1 = (TH1*)GetCurrentHist();
+	if(h1 == 0x0) return;
+	h1->GetXaxis()->UnZoom();
+	gPad->Modified();
+}
+
+void blowy(float min, float max){ // ANAROOT準拠。旧バージョンのxrange。
+	TH1 *h1 = (TH1*)GetCurrentHist();
+	if(h1 == 0x0) return;
+	h1->GetYaxis()->SetRangeUser(min,max);
+	gPad->Modified();
+}
+
+void blowy(){ // 引数なしバージョンはunzoom
+	TH1 *h1 = (TH1*)GetCurrentHist();
+	if(h1 == 0x0) return;
+	h1->GetYaxis()->UnZoom();
+	gPad->Modified();
+}
+
+void delstat(){
+	TH1* h1 = (TH1*)GetCurrentHist();
+	if(h1 == 0x0) return;
+	h1->SetStats(0);
+	gPad->Modified();
+}
+
+void showstat(){
+	TH1* h1 = (TH1*)GetCurrentHist();
+	if(h1 == 0x0) return;
+	h1->SetStats(1);
+	gPad->Modified();
+}
 
 void SetAPStyle(){
 	// Font setting
