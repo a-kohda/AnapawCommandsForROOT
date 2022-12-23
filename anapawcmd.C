@@ -124,33 +124,36 @@ void ht(TString opt){
 	DrawHist(h1, opt);
 }
 
-void hn(TString opt = defaultdrawopt){
+void S_hNorB(int kind, TString opt = defaultdrawopt){
+	if(kind != 1 && kind != 2) return;
+	// kind 1:hn, 2:hb
 	TH1* h1 = (TH1*)GetCurrentHist(true);
 	int currentHID = GetObjID(h1); // リストにない場合は -1 が入るはず。
 	TList* li = GetHistList();
+	int linum = li->GetEntries();
 	TH1* h1_2;
-	while(1){
-		h1_2 = (TH1*)li->At(currentHID+1);
-		if(h1_2 != 0x0 &&  h1_2 ->InheritsFrom("TH1")  ){ break; }
-		if(currentHID < li->GetEntries() ){ currentHID ++; }
-		else{ currentHID = -1; }
+	bool exdraw = false;
+	for(int i=0; i< linum+1 ; i++){
+		if(kind==1) h1_2 = (TH1*)li->At(currentHID+1);
+		if(kind==2) h1_2 = (TH1*)li->At(currentHID-1);
+		if(h1_2 != 0x0 &&  h1_2 ->InheritsFrom("TH1")  ){ 
+			exdraw = true;
+			break; 
+		}
+		if(kind==1){
+			if(currentHID < li->GetEntries() ){ currentHID ++; }
+			else{ currentHID = -1; }
+		}
+		if(kind==2){
+			if(currentHID > 0 ){ currentHID --; }
+			else{ currentHID = li->GetEntries(); }
+		}
 	}
-	DrawHist(h1_2, opt);
+	if(exdraw){ DrawHist(h1_2, opt); }
 }
 
-void hb(TString opt = defaultdrawopt){
-	TH1* h1 = (TH1*)GetCurrentHist(true);
-	int currentHID = GetObjID(h1); // リストにない場合は -1 が入るはず。
-	TList* li = GetHistList();
-	TH1* h1_2;
-	while(1){
-		h1_2 = (TH1*)li->At(currentHID-1);
-		if(h1_2 != 0x0 &&  h1_2 ->InheritsFrom("TH1")  ){ break; }
-		if(currentHID > 0 ){ currentHID --; }
-		else{ currentHID = li->GetEntries(); }
-	}
-	DrawHist(h1_2, opt);
-}
+void hn(TString opt = defaultdrawopt){ S_hNorB(1, opt); }
+void hb(TString opt = defaultdrawopt){ S_hNorB(2, opt); }
 
 
 void DrawHist(TH1* h1, TString opt = defaultdrawopt){
@@ -258,9 +261,14 @@ void showstat(){
 	gPad->Modified();
 }
 
+void hupdate(){
+	if(gPad == 0x0) return;
+	gPad->Modified();
+	gPad->Update();
+}
+
 void SetAPStyle(){
-	// Font setting
-	int fontid=22; // Times系フォント
+	int fontid=22; // Times系太字フォント
 	gStyle->SetStatFont(fontid);
 	gStyle->SetLabelFont(fontid,"XYZ");
 	gStyle->SetLabelFont(fontid,"");
@@ -268,8 +276,6 @@ void SetAPStyle(){
 	gStyle->SetTitleFont(fontid,"");
 	gStyle->SetTextFont(fontid);
 	gStyle->SetLegendFont(fontid);
-
-	// Copy from ANAROOT
 	gStyle->SetHistFillColor(7);
 	gStyle->SetHistFillStyle(3001);
 	gStyle->SetHistLineColor(kBlue);
