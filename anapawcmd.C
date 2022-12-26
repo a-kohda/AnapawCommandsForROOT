@@ -45,7 +45,7 @@ TList* GetHistList();        // .lsで表示されるオブジェクトのリス
 void DrawHist(TH1* h1, TString opt);
 //void DeleteObjFromGPad(TString name); // gPad上にある(TGraphなどの)オブジェクトを消す(nameで指定)
 void SetAPStyle();           // Histの見栄えをANAPAWっぽいstyleにする
-
+void CdNPad();
 
 
 ///////// 関数・クラスの実体記述部 //////////
@@ -168,6 +168,7 @@ void DrawHist(TH1* h1, TString opt = defaultdrawopt){
 	h1->UseCurrentStyle(); // style を強制適用
 	if(gPad == 0x0) TCanvas *c1 = new TCanvas(); // キャンバスがない場合、生成
 	if(statexist) st->SetY1NDC(staty1ndc);
+	CdNPad(); // キャンバス分割している場合は次のPadに移る。(なければしない)
 	h1->Draw(opt);
 	printf(" Draw ID:%3d  %s\n",GetObjID(h1),h1->GetTitle());
   defaultdrawopt = opt;
@@ -298,6 +299,26 @@ void print(){
 	if(!saved) printf(" Not saved because candidate directories not found.\n");
 }
 
+void zone(int x, int y){
+	if(gPad == 0x0) return;
+	TH1* h1 = (TH1*)GetCurrentHist();
+	gPad->GetCanvas()->Clear();
+	if(x==1 && y==1){
+		gPad->GetCanvas()->Clear();
+	} else {
+		gPad->GetCanvas()->Divide(x,y);
+		gPad->GetCanvas()->cd(x*y); // DrawHist padnum+1するのでここはmax(苦肉の策)
+	}
+	if(h1 != 0x0) DrawHist(h1);
+}
+
+void CdNPad(){
+	if(gPad == 0x0) return;
+	if(gPad == gPad->GetCanvas()) return; // 分割されてなければ終了
+	if(gPad == gPad->GetCanvas()->cd(gPad->GetNumber()+1) ){
+		gPad->GetCanvas()->cd(1);	
+	}
+}
 
 void SetAPStyle(){
 	int fontid=22; // Times系太字フォント
