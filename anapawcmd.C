@@ -267,6 +267,38 @@ void hupdate(){
 	gPad->Update();
 }
 
+void print(){
+	if(gPad == 0x0) return;
+	// 保存場所
+	vector<TString> sdircand; // 保存ディレクトリの候補
+  sdircand.push_back("./png");    // 候補順に書く
+  sdircand.push_back("../png"); 
+  sdircand.push_back("./plots"); 
+  sdircand.push_back("../plots");
+  //sdircand.push_back("./");
+
+	bool saved = false;
+	for(int i=0;i<sdircand.size();i++){
+		char command[128];
+		sprintf(command, "test -d %s", sdircand[i].Data()); // OS依存性あり
+		//printf("%s\n",command);
+		int returnval = system(command);
+		//printf("%d\n",returnval);
+		if(returnval == 0){
+			TString fname = Form("%s/root%d_%d.png",
+				sdircand[i].Data(),
+				TDatime().GetDate(),TDatime().GetTime());
+
+			//printf("%s\n",fname.Data());
+			gPad->SaveAs(fname.Data());
+			saved = true;
+			break;
+		}
+	}
+	if(!saved) printf(" Not saved because candidate directories not found.\n");
+}
+
+
 void SetAPStyle(){
 	int fontid=22; // Times系太字フォント
 	gStyle->SetStatFont(fontid);
