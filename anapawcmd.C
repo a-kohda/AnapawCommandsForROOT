@@ -271,11 +271,11 @@ void print(){
 	if(gPad == 0x0) return;
 	// 保存場所
 	vector<TString> sdircand; // 保存ディレクトリの候補
-  sdircand.push_back("./png");    // 候補順に書く
-  sdircand.push_back("../png"); 
-  sdircand.push_back("./plots"); 
-  sdircand.push_back("../plots");
-  //sdircand.push_back("./");
+	sdircand.push_back("./png");    // 候補順に書く
+	sdircand.push_back("../png"); 
+	sdircand.push_back("./plots"); 
+	sdircand.push_back("../plots");
+	//sdircand.push_back("./");
 
 	bool saved = false;
 	for(int i=0;i<sdircand.size();i++){
