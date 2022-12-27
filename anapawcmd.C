@@ -322,15 +322,17 @@ void CdNPad(){
 
 void size(float w, float h){ // デフォルトのサイズに対する比率で指定
 	if(gPad == 0x0) return;
-	int defw = 700;
-	int defh = 500;
+	int defw = 600;
+	int defh = 600;
 	int difw = 2;
 	int difh = 24;
 	gPad->GetCanvas()->SetWindowSize (w * defw + difw, h * defh + difh);
 }
 
 void SetAPStyle(){
-	int fontid=22; // Times系太字フォント
+	//int fontid=22; // Times系太字フォント(サイズは割合指定)
+	int fontid=23; // Times系太字フォント(サイズはpx指定)
+	float fsize = 18; // フォントサイズ(px)
 	gStyle->SetStatFont(fontid);
 	gStyle->SetLabelFont(fontid,"XYZ");
 	gStyle->SetLabelFont(fontid,"");
@@ -338,6 +340,14 @@ void SetAPStyle(){
 	gStyle->SetTitleFont(fontid,"");
 	gStyle->SetTextFont(fontid);
 	gStyle->SetLegendFont(fontid);
+	if(1){
+		gStyle->SetStatFontSize(fsize);
+		gStyle->SetLabelSize(fsize, "XYZ");
+		gStyle->SetLabelSize(fsize, "");
+		gStyle->SetTitleSize(fsize, "XYZ");
+		gStyle->SetTitleFontSize(fsize*1.5);
+		gStyle->SetLegendTextSize(fsize);
+	}
 	gStyle->SetHistFillColor(7);
 	gStyle->SetHistFillStyle(3001);
 	gStyle->SetHistLineColor(kBlue);
@@ -358,10 +368,10 @@ void SetAPStyle(){
 	gStyle->SetOptStat(1111111);
 	gStyle->SetPadBorderMode(1);
 	// 自分で追加
-	gStyle->SetCanvasDefW(700+2);  // 指定した値と実際のサイズ(png保存したとき
-	gStyle->SetCanvasDefH(500+24); // 画像サイズ)が違うので注意
+	gStyle->SetCanvasDefW(600+2);  // 指定した値と実際のサイズ(png保存したとき
+	gStyle->SetCanvasDefH(600+24); // 画像サイズ)が違うので注意
 	//gStyle->SetStatFontSize(0.025);
-	//gStyle->SetStatW(0.5); // Statの高さは、文字サイズと行数で自動で決まる
-	
+	gStyle->SetStatW(0.5); // Statの高さは、文字サイズと行数で自動で決まる
+	gStyle->SetStatH(0.11); // px指定フォントの場合は影響されない?	
 }
 
