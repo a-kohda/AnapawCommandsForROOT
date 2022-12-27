@@ -291,7 +291,7 @@ void print(){
 				TDatime().GetDate(),TDatime().GetTime());
 
 			//printf("%s\n",fname.Data());
-			gPad->SaveAs(fname.Data());
+			gPad->GetCanvas()->SaveAs(fname.Data());
 			saved = true;
 			break;
 		}
@@ -300,7 +300,7 @@ void print(){
 }
 
 void zone(int x, int y){
-	if(gPad == 0x0) return;
+	if(gPad == 0x0) TCanvas *c1 = new TCanvas();
 	TH1* h1 = (TH1*)GetCurrentHist();
 	gPad->GetCanvas()->Clear();
 	if(x==1 && y==1){
@@ -318,6 +318,15 @@ void CdNPad(){
 	if(gPad == gPad->GetCanvas()->cd(gPad->GetNumber()+1) ){
 		gPad->GetCanvas()->cd(1);	
 	}
+}
+
+void size(float w, float h){ // デフォルトのサイズに対する比率で指定
+	if(gPad == 0x0) return;
+	int defw = 700;
+	int defh = 500;
+	int difw = 2;
+	int difh = 24;
+	gPad->GetCanvas()->SetWindowSize (w * defw + difw, h * defh + difh);
 }
 
 void SetAPStyle(){
@@ -348,5 +357,11 @@ void SetAPStyle(){
 	gStyle->SetOptFit(1);
 	gStyle->SetOptStat(1111111);
 	gStyle->SetPadBorderMode(1);
+	// 自分で追加
+	gStyle->SetCanvasDefW(700+2);  // 指定した値と実際のサイズ(png保存したとき
+	gStyle->SetCanvasDefH(500+24); // 画像サイズ)が違うので注意
+	//gStyle->SetStatFontSize(0.025);
+	//gStyle->SetStatW(0.5); // Statの高さは、文字サイズと行数で自動で決まる
+	
 }
 
