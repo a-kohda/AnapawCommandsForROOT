@@ -1,7 +1,12 @@
-// ANAPAW Commands for ROOT
-// Version 1.00
-// Last Updated 2022.12.21 by A. Kohda 
-
+// バージョン情報
+void APCver(){
+	printf("                                       \n");
+	printf("  Welcome to ANAPAW Commands for ROOT  \n");
+	printf("  This is Version 1.01                 \n");
+	printf("  Last Updated 2023. 1.12 by A. Kohda  \n");
+	printf("                                       \n");
+}
+//////////////////////////////////////////////////////
 
 // グローバル変数の定義
 TString defaultdrawopt = "colz"; 
@@ -345,7 +350,7 @@ void SetAPStyle(){
 		gStyle->SetLabelSize(fsize, "XYZ");
 		gStyle->SetLabelSize(fsize, "");
 		gStyle->SetTitleSize(fsize, "XYZ");
-		gStyle->SetTitleFontSize(fsize*1.5);
+		gStyle->SetTitleFontSize(fsize*1.2);
 		gStyle->SetLegendTextSize(fsize);
 	}
 	gStyle->SetHistFillColor(7);
