@@ -2,8 +2,8 @@
 void APCver(){
 	printf("                                       \n");
 	printf("  Welcome to ANAPAW Commands for ROOT  \n");
-	printf("  This is Version 1.01                 \n");
-	printf("  Last Updated 2023. 1.12 by A. Kohda  \n");
+	printf("  This is Version 1.02                 \n");
+	printf("  Last Updated 2023. 1.30 by A. Kohda  \n");
 	printf("                                       \n");
 }
 //////////////////////////////////////////////////////
@@ -139,9 +139,12 @@ void S_hNorB(int kind, TString opt = defaultdrawopt){
 	TH1* h1_2;
 	bool exdraw = false;
 	for(int i=0; i< linum+1 ; i++){
-		if(kind==1) h1_2 = (TH1*)li->At(currentHID+1);
-		if(kind==2) h1_2 = (TH1*)li->At(currentHID-1);
-		if(h1_2 != 0x0 &&  h1_2 ->InheritsFrom("TH1")  ){ 
+		int newHID = -1;
+		if(kind==1) newHID = currentHID + 1;
+		if(kind==2) newHID = currentHID - 1;
+		h1_2 = (TH1*)li->At(newHID);
+
+		if(h1_2 != 0x0 &&  h1_2 ->InheritsFrom("TH1") && newHID >= 0 ){ 
 			exdraw = true;
 			break; 
 		}
@@ -150,8 +153,8 @@ void S_hNorB(int kind, TString opt = defaultdrawopt){
 			else{ currentHID = -1; }
 		}
 		if(kind==2){
-			if(currentHID > 0 ){ currentHID --; }
-			else{ currentHID = li->GetEntries(); }
+			if(currentHID > 0 ){ currentHID --; printf("test\n");}
+			else{ currentHID = linum; }
 		}
 	}
 	if(exdraw){ DrawHist(h1_2, opt); }
