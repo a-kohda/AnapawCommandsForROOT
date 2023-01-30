@@ -177,6 +177,7 @@ void DrawHist(TH1* h1, TString opt = defaultdrawopt){
 	if(gPad == 0x0) TCanvas *c1 = new TCanvas(); // キャンバスがない場合、生成
 	if(statexist) st->SetY1NDC(staty1ndc);
 	CdNPad(); // キャンバス分割している場合は次のPadに移る。(なければしない)
+	h1->SetXTitle(Form("Histogram ID = %d",GetObjID(h1)));
 	h1->Draw(opt);
 	printf(" Draw ID:%3d  %s\n",GetObjID(h1),h1->GetTitle());
   defaultdrawopt = opt;
