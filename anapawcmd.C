@@ -2,8 +2,8 @@
 void APCver(){
 	printf("                                       \n");
 	printf("  Welcome to ANAPAW Commands for ROOT  \n");
-	printf("  This is Version 1.02                 \n");
-	printf("  Last Updated 2023. 1.30 by A. Kohda  \n");
+	printf("  This is Version 1.03                 \n");
+	printf("  Last Updated 2023. 1.31 by A. Kohda  \n");
 	printf("                                       \n");
 }
 //////////////////////////////////////////////////////
@@ -52,6 +52,8 @@ void DrawHist(TH1* h1, TString opt);
 void SetAPStyle();           // Histの見栄えをANAPAWっぽいstyleにする
 void CdNPad();
 
+// 関数エイリアス
+TH1* gH1(){ return GetCurrentHist(true); }
 
 ///////// 関数・クラスの実体記述部 //////////
 
