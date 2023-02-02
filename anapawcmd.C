@@ -2,8 +2,8 @@
 void APCver(){
 	printf("                                       \n");
 	printf("  Welcome to ANAPAW Commands for ROOT  \n");
-	printf("  This is Version 1.03                 \n");
-	printf("  Last Updated 2023. 1.31 by A. Kohda  \n");
+	printf("  This is Version 1.04                 \n");
+	printf("  Last Updated 2023. 2. 1 by A. Kohda  \n");
 	printf("                                       \n");
 }
 //////////////////////////////////////////////////////
@@ -181,6 +181,18 @@ void DrawHist(TH1* h1, TString opt = defaultdrawopt){
 	CdNPad(); // キャンバス分割している場合は次のPadに移る。(なければしない)
 	h1->SetXTitle(Form("Histogram ID = %d",GetObjID(h1)));
 	h1->Draw(opt);
+
+	// 情報表示
+	TText *tfilename = new TText(0.01,0.01,gDirectory->GetName());
+	tfilename->SetNDC(1);
+	tfilename->SetTextAlign(11);
+	tfilename->Draw();
+	TDatime *currenttime = new TDatime();
+	TText *tdatetime = new TText(0.99,0.99,currenttime->AsSQLString() );
+	tdatetime->SetNDC(1);
+	tdatetime->SetTextAlign(33);
+	tdatetime->Draw();
+
 	printf(" Draw ID:%3d  %s\n",GetObjID(h1),h1->GetTitle());
   defaultdrawopt = opt;
 }
@@ -357,6 +369,7 @@ void SetAPStyle(){
 		gStyle->SetLabelSize(fsize, "");
 		gStyle->SetTitleSize(fsize, "XYZ");
 		gStyle->SetTitleFontSize(fsize*1.2);
+		gStyle->SetTextSize(fsize);
 		gStyle->SetLegendTextSize(fsize);
 	}
 	gStyle->SetHistFillColor(7);
@@ -384,5 +397,6 @@ void SetAPStyle(){
 	//gStyle->SetStatFontSize(0.025);
 	gStyle->SetStatW(0.5); // Statの高さは、文字サイズと行数で自動で決まる
 	gStyle->SetStatH(0.11); // px指定フォントの場合は影響されない?	
+	gStyle->SetTitleY(0.95);
 }
 
