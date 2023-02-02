@@ -2,8 +2,8 @@
 void APCver(){
 	printf("                                       \n");
 	printf("  Welcome to ANAPAW Commands for ROOT  \n");
-	printf("  This is Version 1.04                 \n");
-	printf("  Last Updated 2023. 2. 1 by A. Kohda  \n");
+	printf("  This is Version 1.05                 \n");
+	printf("  Last Updated 2023. 2. 2 by A. Kohda  \n");
 	printf("                                       \n");
 }
 //////////////////////////////////////////////////////
@@ -243,10 +243,28 @@ void S_slXorY(int axis, int div=-1, bool ira = false){
 //void slx(){ S_slXorY(1); }
 void sly(){ S_slXorY(2); }
 
+void chbin(int ngroupx){ // 現在x方向のみ可能。
+	TH1D* h1 = (TH1D*)GetCurrentHist();
+	if( h1==0x0 ) { return; }
+	TString ptitle = h1->GetTitle(); 
+	TString pname  = h1->GetName();
+	TH1D* h1_copied = (TH1D*)h1->Clone();
+	h1_copied->SetTitle(Form("%s (chbx%d)",ptitle.Data(),ngroupx));
+	h1_copied->SetName(Form("%s_chbx%d",pname.Data(),ngroupx));
+	h1_copied->Rebin(ngroupx);
+	gDirectory->GetListOfKeys()->AddLast(h1_copied);
+	DrawHist(h1_copied);
+	gPad->Modified();
+	gPad->Update();
+	gPad->Modified();
+}
+
 void blowx(float xmin, float xmax){ // ANAROOT準拠。旧バージョンのxrange。
 	TH1 *h1 = (TH1*)GetCurrentHist();
 	if(h1 == 0x0) return;
 	h1->GetXaxis()->SetRangeUser(xmin,xmax);
+	gPad->Modified();
+	gPad->Update();
 	gPad->Modified();
 }
 
