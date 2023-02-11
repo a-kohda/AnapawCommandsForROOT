@@ -2,8 +2,8 @@
 void APCver(){
 	printf("                                       \n");
 	printf("  Welcome to ANAPAW Commands for ROOT  \n");
-	printf("  This is Version 1.05                 \n");
-	printf("  Last Updated 2023. 2. 2 by A. Kohda  \n");
+	printf("  This is Version 1.06                 \n");
+	printf("  Last Updated 2023. 2.11 by A. Kohda  \n");
 	printf("                                       \n");
 }
 //////////////////////////////////////////////////////
@@ -287,6 +287,25 @@ void blowy(){ // 引数なしバージョンはunzoom
 	if(h1 == 0x0) return;
 	h1->GetYaxis()->UnZoom();
 	gPad->Modified();
+}
+
+void mami(float min = 1, float max = -1){ // 今の所 TH2 のみ
+	TH2 *h1 = (TH2*)GetCurrentHist();
+	if(h1 == 0x0) return;
+	if(min < max){
+		h1->GetZaxis()->SetRangeUser(min,max);
+	}else{
+		h1->GetZaxis()->UnZoom();
+	}
+	gPad->Modified();
+}
+
+void prx(){
+	TH2 *h2 = (TH2*)GetCurrentHist();
+	if(h2 == 0x0) return;
+	TH1D* h1 = h2->ProjectionX();
+	gDirectory->GetListOfKeys()->AddLast(h1);
+	DrawHist(h1);
 }
 
 void delstat(){
