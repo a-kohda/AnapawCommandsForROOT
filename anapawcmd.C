@@ -300,10 +300,21 @@ void mami(float min = 1, float max = -1){ // 今の所 TH2 のみ
 	gPad->Modified();
 }
 
-void prx(){
+void prx(float min = 0, float max = -1){ // 開発中
 	TH2 *h2 = (TH2*)GetCurrentHist();
 	if(h2 == 0x0) return;
-	TH1D* h1 = h2->ProjectionX();
+	TH1D* h1;
+	if(min>max){
+		h1 = h2->ProjectionX();
+	}else{
+		h1 = h2->ProjectionX("_px", h2->GetYaxis()->FindBin(min), h2->GetYaxis()->FindBin(max));
+		h1->SetTitle(Form("%s px%#6g-%#6g",h2->GetTitle(),min,max));
+	}
+	TString pname  = h2->GetName(); // TitleではなくNameを使う必要あり。要改善
+	while( gROOT->FindObject(Form("%s_px",pname.Data())) != 0x0 ) {
+		pname += "_"; // nameが重複する場合"_"をもう一個足す。
+	}
+	h1->SetName(Form("%s_px",pname.Data()));
 	gDirectory->GetListOfKeys()->AddLast(h1);
 	DrawHist(h1);
 }
@@ -389,6 +400,129 @@ void size(float w, float h){ // デフォルトのサイズに対する比率で
 	gPad->GetCanvas()->SetWindowSize (w * defw + difw, h * defh + difh);
 }
 
+float figali(float xmin, float xmax, 
+		bool oldel =true, bool print = true, int kreturn =0, 
+		TH1* ihist = 0x0 ){
+	// oldel: old line delete
+	// ihist 対象とするHist, 未入力or 0x0 指定で現在のヒストを取得する。
+	
+	TH1* h1;
+	bool arghist = false; // 引数で処理するhistを指定してるか
+	if(ihist == 0x0){
+		h1 = GetCurrentHist();
+	}else{
+		h1 = ihist;
+		//ihist->Draw();
+		arghist = true;
+	}
+
+	// 以前この関数を使った際に描いたTGraphを消す
+	if(gPad->GetListOfPrimitives()->FindObject("fli") != 0x0){
+		gPad->GetListOfPrimitives()->FindObject("fli")->Delete();
+	}
+	if(gPad->GetListOfPrimitives()->FindObject("fppl0") != 0x0){
+		gPad->GetListOfPrimitives()->FindObject("fppl0")->Delete();
+	}
+	if(gPad->GetListOfPrimitives()->FindObject("fppl1") != 0x0){
+		gPad->GetListOfPrimitives()->FindObject("fppl1")->Delete();
+	}
+	if(gPad->GetListOfPrimitives()->FindObject("fppl2") != 0x0){
+		gPad->GetListOfPrimitives()->FindObject("fppl2")->Delete();
+	}
+
+
+	float initialmin, initialmax;
+	
+	initialmin = h1->GetXaxis()->GetBinCenter(h1->GetXaxis()->GetFirst());
+	initialmax = h1->GetXaxis()->GetBinCenter(h1->GetXaxis()->GetLast());
+	h1->GetXaxis()->SetRangeUser(xmin,xmax);
+	
+
+	TF1 *fit1 = new TF1("fit1","[0]*exp(-0.5*((x-[1])/[2])*((x-[1])/[2]))+[3]*x+[4]",xmin ,xmax);
+	fit1->SetParameter(0,h1->GetBinContent(h1->GetMaximumBin()));
+	fit1->SetParameter(1,h1->GetBinCenter(h1->GetMaximumBin()));
+	fit1->SetParameter(2,(xmax - xmin)/10 );
+
+	float tempx1 = xmin;
+	float tempy1 = h1->GetBinContent(h1->FindBin(xmin));
+	float tempx2 = xmax;
+	float tempy2 = h1->GetBinContent(h1->FindBin(xmax));
+	float tempa  = (tempy2-tempy1)/(tempx2-tempx1);
+	float tempb  = tempy1 - tempa * tempx1;
+	fit1->SetParameter(3,tempa);
+	fit1->SetParameter(4,tempb);
+
+	h1->Fit("fit1","RQ","");
+
+	TGraph* gfit1 = new TGraph(fit1);
+	gfit1->SetLineColor(2);
+	gfit1->SetLineWidth(2);
+	gfit1->Draw("same");
+
+	TF1* fli = new TF1("fli",Form("%f*x+%f",fit1->GetParameter(3),fit1->GetParameter(4)),xmin ,xmax);
+
+	TGraph* gli = new TGraph(fli);
+	gli->SetLineColor(4);
+	gli->SetLineWidth(1);
+	if(!arghist){
+		gli->Draw();
+	}else{
+		gli->Draw("same");
+	}
+
+	TGraph* ppl[3];
+	float pplx[3];
+	pplx[0] = fit1->GetParameter(1); // Mean
+	pplx[1] = fit1->GetParameter(1) - 5 * TMath::Abs(fit1->GetParameter(2)); // Mean - 5 sigma
+	pplx[2] = fit1->GetParameter(1) + 5 * TMath::Abs(fit1->GetParameter(2)); // Mean + 5 sigma
+	for (int k=0; k<3; k++) {
+		ppl[k] = new TGraph();
+		ppl[k]->SetName(Form("fppl%d",k));
+		ppl[k]->SetPoint(0, pplx[k], 0);
+		ppl[k]->SetPoint(1, pplx[k], INFINITY);
+		ppl[k]->SetLineColor(3);
+		if(!arghist){ ppl[k]->Draw(); } else { ppl[k]->Draw("same"); }
+	}
+	
+
+	int startbin = h1->FindBin(pplx[1]);
+	int endbin   = h1->FindBin(pplx[2]);		
+	float startval = h1->GetBinLowEdge(startbin);
+	float endval   = h1->GetBinLowEdge(endbin+1);
+
+//	printf("Constant : %f\n", fit1->GetParameter(0));
+
+	float integral      = h1->Integral(startbin,endbin);
+	float integralerr   = TMath::Sqrt(integral);
+	float background    = fli->Integral(startval,endval)/5.; // 要改善
+	float backgrounderr = TMath::Sqrt(background);
+	float calcedpeak    = integral - background;
+	float calcedpeakerr = TMath::Sqrt(integral + background);
+
+	if(print){
+		printf("\n");
+		printf("Center   : %#8g\n", fit1->GetParameter(1));
+		printf("Sigma    : %#8g\n", TMath::Abs(fit1->GetParameter(2)));
+		printf("Integral : %#8g  +-  %#8g\n", integral, integralerr );
+		printf("CalcInte : %#8g\n", fit1->Integral(startval,endval)/5.); // 要改善
+		printf("B.G.     : %#8g  +-  %#8g\n", background, backgrounderr); 
+		printf("Int - BG : %#8g  +-  %#8g\n", calcedpeak, calcedpeakerr); 
+
+		printf("for me   : %#8g\t%#8g\t%#8g\n",fit1->GetParameter(1), calcedpeak, calcedpeakerr ); 
+		printf("\n");
+	}
+
+	//xrange(initialmin, initialmax);
+	if(!arghist){
+		h1->GetXaxis()->SetRangeUser(initialmin, initialmax);
+		h1->Draw("hist same");
+	}
+//gli->Draw();
+
+	return fit1->GetParameter(1);
+}
+
+
 void SetAPStyle(){
 	//int fontid=22; // Times系太字フォント(サイズは割合指定)
 	int fontid=23; // Times系太字フォント(サイズはpx指定)
@@ -437,3 +571,29 @@ void SetAPStyle(){
 	gStyle->SetTitleY(0.95);
 }
 
+void ReDrawSlideStyle(){
+	gPad->SetFrameLineWidth(2);
+	gStyle->SetLineWidth(2);
+	TH1* h1 = (TH1*)GetCurrentHist();	
+	h1->Draw();
+	h1->SetTitle(";;;");
+	h1->SetStats(0);
+	int fontid=63;
+	float fsize = 22; // フォントサイズ(px)
+	h1->SetLabelFont(fontid,"XYZ");
+	h1->SetLabelFont(fontid,"");
+	h1->SetLabelSize(fsize,"XYZ");
+	h1->SetLabelSize(fsize,"");
+	h1->SetLabelOffset (0.02,"XY");
+	gPad->SetGrid(0,0);
+	gPad->SetTicks();
+	h1->GetXaxis()->SetNdivisions(7);
+	h1->GetYaxis()->SetNdivisions(7);
+	h1->SetLineWidth(2);
+	h1->SetFillStyle(0);
+	h1->SetLineColor(0);
+	h1->SetLineColor(1);
+	gPad->Modified();
+	gPad->Update();
+	gPad->Modified();
+}
