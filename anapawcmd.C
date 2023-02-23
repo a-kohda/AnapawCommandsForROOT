@@ -400,7 +400,7 @@ void size(float w, float h){ // デフォルトのサイズに対する比率で
 	gPad->GetCanvas()->SetWindowSize (w * defw + difw, h * defh + difh);
 }
 
-float figali(float xmin, float xmax, 
+void figali(float xmin, float xmax, 
 		bool oldel =true, bool print = true, int kreturn =0, 
 		TH1* ihist = 0x0 ){
 	// oldel: old line delete
@@ -439,6 +439,9 @@ float figali(float xmin, float xmax,
 	
 
 	TF1 *fit1 = new TF1("fit1","[0]*exp(-0.5*((x-[1])/[2])*((x-[1])/[2]))+[3]*x+[4]",xmin ,xmax);
+	fit1->SetParName(0,"Constant");
+	fit1->SetParName(1,"Mean");
+	fit1->SetParName(2,"Sigma");
 	fit1->SetParameter(0,h1->GetBinContent(h1->GetMaximumBin()));
 	fit1->SetParameter(1,h1->GetBinCenter(h1->GetMaximumBin()));
 	fit1->SetParameter(2,(xmax - xmin)/10 );
@@ -508,18 +511,21 @@ float figali(float xmin, float xmax,
 		printf("B.G.     : %#8g  +-  %#8g\n", background, backgrounderr); 
 		printf("Int - BG : %#8g  +-  %#8g\n", calcedpeak, calcedpeakerr); 
 
-		printf("for me   : %#8g\t%#8g\t%#8g\n",fit1->GetParameter(1), calcedpeak, calcedpeakerr ); 
+	//	printf("for me   : %#8g\t%#8g\t%#8g\n",fit1->GetParameter(1), calcedpeak, calcedpeakerr ); 
 		printf("\n");
 	}
 
 	//xrange(initialmin, initialmax);
 	if(!arghist){
 		h1->GetXaxis()->SetRangeUser(initialmin, initialmax);
-		h1->Draw("hist same");
+		//h1->Draw("hist same");
+		gPad->Modified();
+		gPad->Update();
+		gPad->Modified();
 	}
 //gli->Draw();
 
-	return fit1->GetParameter(1);
+	//return fit1->GetParameter(1);
 }
 
 
