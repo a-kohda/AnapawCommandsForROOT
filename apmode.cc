@@ -26,7 +26,7 @@ TRint_apcr::TRint_apcr(const char *appClassName, Int_t *argc, char **argv,
 
 
 Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
-// $BF~NOJ8;zNs$r%9%Z!<%96h@Z$j$GJ,3d(B
+// 入力文字列をスペース区切りで分割
 	std::vector<TString> vts;
 	std::string s = line;
 	std::stringstream ss{s};
@@ -39,7 +39,7 @@ Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
 //		printf("%s\n", vts[i].Data());
 //	}
 
-// 1$BHVL\$NJ8;zNs%V%m%C%/$,%3%^%s%I$H0lCW$9$l$P4X?t$H$7$F@07A(B
+// 1番目の文字列ブロックがコマンドと一致すれば関数として整形
 	if(vts.size()>=1){
 		TString tstemp2;
 		tstemp2 = vts[0];
