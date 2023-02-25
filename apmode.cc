@@ -83,6 +83,8 @@ Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
 	if(vts.size()>=1){
 		IsAPcmd += vts[0].EqualTo("ls");
 		IsAPcmd += vts[0].EqualTo("ht");
+		IsAPcmd += vts[0].EqualTo("hn");
+		IsAPcmd += vts[0].EqualTo("hb");
 	}
 
 	//printf("aa\n");
