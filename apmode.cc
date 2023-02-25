@@ -3,13 +3,14 @@
 #include <istream>
 #include <sstream>
 #include <TRint.h>
-
+#include "TObjString.h"
+#include <TROOT.h>
 
 class TRint_apcr : public TRint{
 	public:
 		TRint_apcr(const char *appClassName, Int_t *argc, char **argv,
 	   void *options=0, int numOptions=0, Bool_t noLogo = kFALSE);
-		Long_t ProcessLine(const char *line, Bool_t sync, Int_t *err);
+		Long_t ProcessLine(const char *line, Bool_t sync = kFALSE, Int_t *error = nullptr);
 };
 
 int main(int argc, char* argv[]){
@@ -22,13 +23,37 @@ int main(int argc, char* argv[]){
 
 TRint_apcr::TRint_apcr(const char *appClassName, Int_t *argc, char **argv,
 		   void *options, Int_t numOptions, Bool_t noLogo)
-: TRint(appClassName, argc, argv, options, numOptions, kTRUE){}
+: TRint(appClassName, argc, argv, options, numOptions, kTRUE){
+	TRint::ProcessLine(".L /home/kohda/.rootmacros/AnapawCommandsForROOT/anapawcmd.C");
+
+}
 
 
 Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
+
+
+////// copy from artemis sources/main/TArtRint.cc#L91
+      TString lines(line);
+      TObjArray *arr = lines.Tokenize('\n');
+      std::vector<TString> cmds;
+      for (Int_t i = 0; i < arr->GetEntries(); ++i) {
+         TString aCmd = ((TObjString*)arr->At(i))->GetString();
+         if (!aCmd.BeginsWith("#")) {
+            cmds.push_back(aCmd);
+         }
+      }
+      TString cmdline;
+      for (Int_t i=0; i<cmds.size(); ++i) {
+         if (i>0) cmdline.Append("\n");
+         cmdline.Append(cmds[i]);
+      }
+//	printf("%s\n",cmdline.Data());
+//////
+
+
 // 入力文字列をスペース区切りで分割
 	std::vector<TString> vts;
-	std::string s = line;
+	std::string s = cmdline.Data();
 	std::stringstream ss{s};
 	std::string buf;
 	while (std::getline(ss, buf, ' ')) {
@@ -40,6 +65,7 @@ Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
 //	}
 
 // 1番目の文字列ブロックがコマンドと一致すれば関数として整形
+	TString formedAPcmd;
 	if(vts.size()>=1){
 		TString tstemp2;
 		tstemp2 = vts[0];
@@ -49,17 +75,29 @@ Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
 			tstemp2 += vts[i+1];
 		}
 		tstemp2 += ")";
-		printf("%s\n", tstemp2.Data());
+		//printf("%s\n", tstemp2.Data());
+		formedAPcmd = tstemp2;
+	}
+
+	bool IsAPcmd = false;
+	if(vts.size()>=1){
+		IsAPcmd += vts[0].EqualTo("ls");
+		IsAPcmd += vts[0].EqualTo("ht");
 	}
 
 	//printf("aa\n");
 	TString sline(line);
-	//printf("%s\n",sline.Data());
-	if( sline.EqualTo("help") ){
-		printf("aaaaaaa\n");
-		sline = ".help";
+//	//printf("%s\n",sline.Data());
+//	if( sline.EqualTo("help") ){
+//		printf("aaaaaaa\n");
+//		sline = ".help";
+//	}
+
+	if(IsAPcmd){
+		TRint::ProcessLine(formedAPcmd.Data(), kFALSE, err);
+	}else{
+		TRint::ProcessLine(sline.Data(), kFALSE, err);
 	}
-	TRint::ProcessLine(sline.Data(), kFALSE, err);
 	return 1;	
 }
 
