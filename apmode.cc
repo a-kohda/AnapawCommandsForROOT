@@ -85,6 +85,26 @@ Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
 		IsAPcmd += vts[0].EqualTo("ht");
 		IsAPcmd += vts[0].EqualTo("hn");
 		IsAPcmd += vts[0].EqualTo("hb");
+		IsAPcmd += vts[0].EqualTo("hlist");
+		IsAPcmd += vts[0].EqualTo("lnx");
+		IsAPcmd += vts[0].EqualTo("lgx");
+		IsAPcmd += vts[0].EqualTo("lny");
+		IsAPcmd += vts[0].EqualTo("lgy");
+		IsAPcmd += vts[0].EqualTo("lnz");
+		IsAPcmd += vts[0].EqualTo("lgz");
+		IsAPcmd += vts[0].EqualTo("sly");
+		IsAPcmd += vts[0].EqualTo("chbin");
+		IsAPcmd += vts[0].EqualTo("blowx");
+		IsAPcmd += vts[0].EqualTo("blowy");
+		IsAPcmd += vts[0].EqualTo("mami");
+		IsAPcmd += vts[0].EqualTo("prx");
+		IsAPcmd += vts[0].EqualTo("delstat");
+		IsAPcmd += vts[0].EqualTo("showstat");
+		IsAPcmd += vts[0].EqualTo("hupdate");
+		IsAPcmd += vts[0].EqualTo("print");
+		IsAPcmd += vts[0].EqualTo("zone");
+		IsAPcmd += vts[0].EqualTo("size");
+		IsAPcmd += vts[0].EqualTo("figali");
 	}
 
 	//printf("aa\n");

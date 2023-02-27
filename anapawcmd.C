@@ -528,6 +528,12 @@ void figali(float xmin, float xmax,
 	//return fit1->GetParameter(1);
 }
 
+void switchAPmode(){
+	TString apmodepath = "/home/kohda/.rootmacros/AnapawCommandsForROOT/apmode";
+	TString openingfile = gDirectory->GetName();
+	if( openingfile.EqualTo("Rint") ) openingfile = "";
+	gROOT->ProcessLine(Form(".! %s %s",apmodepath.Data(),openingfile.Data()));
+}
 
 void SetAPStyle(){
 	//int fontid=22; // Times系太字フォント(サイズは割合指定)
