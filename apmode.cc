@@ -98,6 +98,7 @@ Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
 		IsAPcmd += vts[0].EqualTo("blowy");
 		IsAPcmd += vts[0].EqualTo("mami");
 		IsAPcmd += vts[0].EqualTo("prx");
+		IsAPcmd += vts[0].EqualTo("pry");
 		IsAPcmd += vts[0].EqualTo("delstat");
 		IsAPcmd += vts[0].EqualTo("showstat");
 		IsAPcmd += vts[0].EqualTo("hupdate");

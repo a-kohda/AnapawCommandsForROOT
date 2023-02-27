@@ -1,9 +1,8 @@
 // バージョン情報
-void APCver(){
+void APCRver(){
 	printf("                                       \n");
-	printf("  Welcome to ANAPAW Commands for ROOT  \n");
-	printf("  This is Version 1.06                 \n");
-	printf("  Last Updated 2023. 2.11 by A. Kohda  \n");
+	printf("  ANAPAW Commands for ROOT Ver 1.07    \n");
+	printf("  Last Updated 2023. 2.27 by A. Kohda  \n");
 	printf("                                       \n");
 }
 //////////////////////////////////////////////////////
@@ -300,24 +299,48 @@ void mami(float min = 1, float max = -1){ // 今の所 TH2 のみ
 	gPad->Modified();
 }
 
-void prx(float min = 0, float max = -1){ // 開発中
+void S_prXorY(int kind, float min = 0, float max = -1){ // 開発中
+	if(kind != 1 && kind != 2) return; // 1:x, 2:y
+	
 	TH2 *h2 = (TH2*)GetCurrentHist();
 	if(h2 == 0x0) return;
 	TH1D* h1;
+
 	if(min>max){
-		h1 = h2->ProjectionX();
+		if(kind==1) h1 = h2->ProjectionX("_p");
+		if(kind==2) h1 = h2->ProjectionY("_p");
 	}else{
-		h1 = h2->ProjectionX("_px", h2->GetYaxis()->FindBin(min), h2->GetYaxis()->FindBin(max));
-		h1->SetTitle(Form("%s px%#6g-%#6g",h2->GetTitle(),min,max));
+		int binmin, binmax;
+		if(kind==1){
+			binmin = h2->GetYaxis()->FindBin(min); 
+			binmax = h2->GetYaxis()->FindBin(max);
+		}
+		if(kind==2){
+			binmin = h2->GetXaxis()->FindBin(min);
+			binmax = h2->GetXaxis()->FindBin(max);
+		}
+		if(kind==1) h1 = h2->ProjectionX("_p", binmin, binmax);
+		if(kind==2) h1 = h2->ProjectionY("_p", binmin, binmax);
 	}
-	TString pname  = h2->GetName(); // TitleではなくNameを使う必要あり。要改善
-	while( gROOT->FindObject(Form("%s_px",pname.Data())) != 0x0 ) {
+	if(kind==1) h1->SetTitle(Form("%s px%#6g-%#6g",h2->GetTitle(),min,max));
+	if(kind==2) h1->SetTitle(Form("%s py%#6g-%#6g",h2->GetTitle(),min,max));
+
+	TString pname  = h2->GetName();
+	while(true){
+		if(kind==1 && gROOT->FindObject(Form("%s_px",pname.Data()))==0x0 ) break;
+		if(kind==2 && gROOT->FindObject(Form("%s_py",pname.Data()))==0x0 ) break;
 		pname += "_"; // nameが重複する場合"_"をもう一個足す。
 	}
-	h1->SetName(Form("%s_px",pname.Data()));
+
+	if(kind==1) h1->SetName(Form("%s_px",pname.Data()));
+	if(kind==2) h1->SetName(Form("%s_py",pname.Data()));
 	gDirectory->GetListOfKeys()->AddLast(h1);
 	DrawHist(h1);
 }
+
+void prx(float min = 0, float max = -1){ S_prXorY(1, min, max); }
+void pry(float min = 0, float max = -1){ S_prXorY(2, min, max); }
+
 
 void delstat(){
 	TH1* h1 = (TH1*)GetCurrentHist();
