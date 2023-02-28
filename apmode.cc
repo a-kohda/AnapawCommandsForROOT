@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <vector>
 #include <TRint.h>
-#include <TROOT.h>
 
 class TRint_apcr : public TRint{
 	public:
