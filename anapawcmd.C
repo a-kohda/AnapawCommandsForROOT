@@ -154,7 +154,7 @@ void S_hNorB(int kind, TString opt = defaultdrawopt){
 			else{ currentHID = -1; }
 		}
 		if(kind==2){
-			if(currentHID > 0 ){ currentHID --; printf("test\n");}
+			if(currentHID > 0 ){ currentHID --; /*printf("test\n");*/}
 			else{ currentHID = linum; }
 		}
 	}
