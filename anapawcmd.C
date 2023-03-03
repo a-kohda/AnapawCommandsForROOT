@@ -1,8 +1,8 @@
 // バージョン情報
 void APCRver(){
 	printf("                                       \n");
-	printf("  ANAPAW Commands for ROOT Ver 1.07    \n");
-	printf("  Last Updated 2023. 2.27 by A. Kohda  \n");
+	printf("  ANAPAW Commands for ROOT Ver 1.08    \n");
+	printf("  Last Updated 2023. 3. 3 by A. Kohda  \n");
 	printf("                                       \n");
 }
 //////////////////////////////////////////////////////
@@ -15,10 +15,10 @@ vector<double> gDoubleVec;
 // 基本操作用の関数
 void hlist();                // Index番号付きでヒストグラムのリストを表示する
 void (*ls)() = hlist;        // "hlist()"は"ls()"でも可
-void ht(int n, TString opt); // n番目のhistをDraw (オプション指定あり)
-void ht(TString opt);        // 現在表示されているhistのoptionを変更して再Draw
-void hn(TString opt);        // 現在表示されているhistの次のhistを表示
-void hb(TString opt);        // 現在表示されているhistの前のhistを表示
+//void ht(int n, TString opt); // n番目のhistをDraw (オプション指定あり)
+//void ht(TString opt);        // 現在表示されているhistのoptionを変更して再Draw
+//void hn(TString opt);        // 現在表示されているhistの次のhistを表示
+//void hb(TString opt);        // 現在表示されているhistの前のhistを表示
 
 // フィッティング系
 //void fig();                  // 現在表示されているhistをGausianでfit (現在表示中の全範囲で)
@@ -43,10 +43,10 @@ void lnz();                  // z軸をリニアスケールにする
 
 
 // このマクロ内で使用する関数
-TH1* GetCurrentHist(bool quiet);// 現在表示されているhistのポインタを返す
+TH1* GetCurrentHist(bool quiet = false);// 現在表示されているhistのポインタを返す
 int  GetObjID(TObject* o1);  // ヒスト等のオブジェクトがリストの何番目にあるかを返す
 TList* GetHistList();        // .lsで表示されるオブジェクトのリスト
-void DrawHist(TH1* h1, TString opt);
+void DrawHist(TH1* h1, TString opt = defaultdrawopt);
 //void DeleteObjFromGPad(TString name); // gPad上にある(TGraphなどの)オブジェクトを消す(nameで指定)
 void SetAPStyle();           // Histの見栄えをANAPAWっぽいstyleにする
 void CdNPad();
@@ -57,7 +57,7 @@ TH1* gH1(){ return GetCurrentHist(true); }
 ///////// 関数・クラスの実体記述部 //////////
 
 
-TH1* GetCurrentHist(bool quiet = false){
+TH1* GetCurrentHist(bool quiet){
 	TH1* h1;
 	if( gPad == 0x0 ){
 		h1 = 0x0;
@@ -165,7 +165,7 @@ void hn(TString opt = defaultdrawopt){ S_hNorB(1, opt); }
 void hb(TString opt = defaultdrawopt){ S_hNorB(2, opt); }
 
 
-void DrawHist(TH1* h1, TString opt = defaultdrawopt){
+void DrawHist(TH1* h1, TString opt){
 	// なぜか2回目にDrawした時にstat boxのサイズ(y方向のみ)が変わってしまうのを防ぐ措置
 	TPaveStats *st = (TPaveStats*)h1->FindObject("stats");
 	bool  statexist = false;
@@ -288,14 +288,23 @@ void blowy(){ // 引数なしバージョンはunzoom
 	gPad->Modified();
 }
 
-void mami(float min = 1, float max = -1){ // 今の所 TH2 のみ
+void mami(float min = 1, float max = -1){ 
 	TH2 *h1 = (TH2*)GetCurrentHist();
 	if(h1 == 0x0) return;
-	if(min < max){
-		h1->GetZaxis()->SetRangeUser(min,max);
+	if(h1->InheritsFrom("TH2")){
+		if(min < max){
+			h1->GetZaxis()->SetRangeUser(min,max);
+		}else{
+			h1->GetZaxis()->UnZoom();
+		}
 	}else{
-		h1->GetZaxis()->UnZoom();
+		if(min < max){
+			blowy(min,max);
+		}else{
+			blowy();
+		}
 	}
+
 	gPad->Modified();
 }
 
@@ -452,6 +461,16 @@ void figali(float xmin, float xmax,
 	if(gPad->GetListOfPrimitives()->FindObject("fppl2") != 0x0){
 		gPad->GetListOfPrimitives()->FindObject("fppl2")->Delete();
 	}
+	if(gPad->GetListOfPrimitives()->FindObject("gfit1") != 0x0){
+		gPad->GetListOfPrimitives()->FindObject("gfit1")->Delete();
+	}
+	if(gPad->GetListOfPrimitives()->FindObject("ptfitinfob") != 0x0){
+		gPad->GetListOfPrimitives()->FindObject("ptfitinfob")->Delete();
+	}
+	if(gPad->GetListOfPrimitives()->FindObject("ptfitinfot") != 0x0){
+		gPad->GetListOfPrimitives()->FindObject("ptfitinfot")->Delete();
+	}
+
 
 
 	float initialmin, initialmax;
@@ -478,9 +497,10 @@ void figali(float xmin, float xmax,
 	fit1->SetParameter(3,tempa);
 	fit1->SetParameter(4,tempb);
 
-	h1->Fit("fit1","RQ","");
+	h1->Fit("fit1","RQN","");
 
 	TGraph* gfit1 = new TGraph(fit1);
+	gfit1->SetName("gfit1");
 	gfit1->SetLineColor(2);
 	gfit1->SetLineWidth(2);
 	gfit1->Draw("same");
@@ -549,6 +569,33 @@ void figali(float xmin, float xmax,
 //gli->Draw();
 
 	//return fit1->GetParameter(1);
+	delstat();
+	TPaveText *pt1 = new TPaveText(.4,.7,.9,.9,"NDC");
+	TPaveText *pt2 = new TPaveText(.55,.7,.9,.9,"NDC");
+	pt1->SetName("ptfitinfob");
+	pt2->SetName("ptfitinfot");
+	pt1->SetTextSize (gStyle->GetStatFontSize());
+	pt2->SetTextSize (gStyle->GetStatFontSize());
+	pt1->SetTextAlign(12);
+	pt2->SetTextAlign(12);
+	pt1->SetBorderSize(1);
+	pt2->SetBorderSize(0);
+	pt1->SetFillStyle(0);
+	pt2->SetFillStyle(0);
+	pt1->AddText("Center");
+		pt2->AddText(Form("%#8g", fit1->GetParameter(1)));
+	pt1->AddText("Sigma");
+		pt2->AddText(Form("%#8g", TMath::Abs(fit1->GetParameter(2))));
+	pt1->AddText("Integral");
+		pt2->AddText(Form("%#8g #pm %#8g", integral, integralerr));
+	pt1->AddText("CalcInte");
+		pt2->AddText(Form("%#8g", fit1->Integral(startval,endval)/5.)); // 要改善
+	pt1->AddText("B.G.");
+		pt2->AddText(Form("%#8g #pm %#8g", background, backgrounderr));
+	pt1->AddText("Int - BG");
+		pt2->AddText(Form("%#8g #pm %#8g", calcedpeak, calcedpeakerr));
+	pt1->Draw();
+	pt2->Draw();
 }
 
 void switchAPmode(){
