@@ -663,6 +663,8 @@ void SetAPStyle(){
 	gStyle->SetTitleY(0.95);
 }
 
+// 以下は自分用のstyle設定
+
 void ReDrawSlideStyle(){
 	gPad->GetCanvas()->SetWindowSize (800 + 2, 600+ 24);
 	int linewidth =3;
@@ -692,8 +694,6 @@ void ReDrawSlideStyle(){
 	gPad->Update();
 	gPad->Modified();
 }
-
-// 以下は自分用のstyle設定
 
 void ReDrawPaperStyle2Djpg(){
 	int linewidth =0;
