@@ -9,9 +9,9 @@
 - ReadMe.md
   - これ。
 - anapawcmd.C
-  - 本体。基本このファイルしか使わない。
+  - 本体。後述のANAPAWモードを使わない場合は、このファイルしか使わない。
 - apmode / apmode.cc
-  - 括弧なしコマンド(ANAPAWモードでの入力)のテストコード。
+  - 括弧なしコマンド(ANAPAWモードでの入力)を使うための実行ファイル。
 - Makefile
   - apmode をビルドするために使う。anapawcmd.Cだけ使う人は要らない。
 
