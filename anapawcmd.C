@@ -693,6 +693,8 @@ void ReDrawSlideStyle(){
 	gPad->Modified();
 }
 
+// 以下は自分用のstyle設定
+
 void ReDrawPaperStyle2Djpg(){
 	int linewidth =0;
 	gPad->SetFrameLineWidth(linewidth);
