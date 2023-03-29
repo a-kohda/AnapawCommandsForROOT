@@ -1,9 +1,7 @@
 // バージョン情報
 void APCRver(){
-	printf("                                       \n");
-	printf("  ANAPAW Commands for ROOT Ver 1.08    \n");
-	printf("  Last Updated 2023. 3. 3 by A. Kohda  \n");
-	printf("                                       \n");
+	printf("  ANAPAW Commands for ROOT Ver 1.09    \n");
+	printf("  Last Updated 2023. 3.29 by A. Kohda  \n");
 }
 //////////////////////////////////////////////////////
 
@@ -242,15 +240,24 @@ void S_slXorY(int axis, int div=-1, bool ira = false){
 //void slx(){ S_slXorY(1); }
 void sly(){ S_slXorY(2); }
 
-void chbin(int ngroupx){ // 現在x方向のみ可能。
+void chbin(int ngroupx, int ngroupy=1, int ngroupz=1){ // 現在x,yどちらかのみ
 	TH1D* h1 = (TH1D*)GetCurrentHist();
 	if( h1==0x0 ) { return; }
 	TString ptitle = h1->GetTitle(); 
 	TString pname  = h1->GetName();
 	TH1D* h1_copied = (TH1D*)h1->Clone();
-	h1_copied->SetTitle(Form("%s (chbx%d)",ptitle.Data(),ngroupx));
-	h1_copied->SetName(Form("%s_chbx%d",pname.Data(),ngroupx));
-	h1_copied->Rebin(ngroupx);
+	if( ngroupy==1 ){ // xのみ
+		h1_copied->SetTitle(Form("%s (chbx%d)",ptitle.Data(),ngroupx));
+		h1_copied->SetName(Form("%s_chbx%d",pname.Data(),ngroupx));
+		h1_copied->Rebin(ngroupx);
+	}
+	if( ngroupx==1 ){ // yのみ
+		h1_copied->SetTitle(Form("%s (chby%d)",ptitle.Data(),ngroupy));
+		h1_copied->SetName(Form("%s_chby%d",pname.Data(),ngroupy));
+		((TH2D*)h1_copied)->RebinY(ngroupy);
+	}
+	
+
 	gDirectory->GetListOfKeys()->AddLast(h1_copied);
 	DrawHist(h1_copied);
 	gPad->Modified();
@@ -422,6 +429,9 @@ void CdNPad(){
 		gPad->GetCanvas()->cd(1);	
 	}
 }
+void (*cdn)() = CdNPad;        // 
+
+
 
 void size(float w, float h){ // デフォルトのサイズに対する比率で指定
 	if(gPad == 0x0) return;

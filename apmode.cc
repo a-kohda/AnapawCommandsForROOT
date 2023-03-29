@@ -20,6 +20,7 @@ TRint_apcr::TRint_apcr(const char *appClassName, Int_t *argc, char **argv,
 		   void *options, Int_t numOptions, Bool_t noLogo)
 : TRint(appClassName, argc, argv, options, numOptions, kTRUE){
 	TRint::ProcessLine(".L /home/kohda/.rootmacros/AnapawCommandsForROOT/anapawcmd.C");
+	TRint::ProcessLine("SetAPStyle();");
 
 }
 
@@ -83,6 +84,7 @@ Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
 		IsAPcmd += tsblocks[0].EqualTo("hupdate");
 		IsAPcmd += tsblocks[0].EqualTo("print");
 		IsAPcmd += tsblocks[0].EqualTo("zone");
+		IsAPcmd += tsblocks[0].EqualTo("cdn");
 		IsAPcmd += tsblocks[0].EqualTo("size");
 		IsAPcmd += tsblocks[0].EqualTo("figali");
 	}
