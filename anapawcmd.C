@@ -430,7 +430,7 @@ void CdNPad(){
 	}
 }
 void (*cdn)() = CdNPad;        // 
-
+// cd, cdbもそのうち作る
 
 
 void size(float w, float h){ // デフォルトのサイズに対する比率で指定
