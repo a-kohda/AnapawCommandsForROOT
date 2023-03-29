@@ -378,7 +378,7 @@ void hupdate(){
 	gPad->Update();
 }
 
-void print(){
+void print(TString ext="png"){
 	if(gPad == 0x0) return;
 	// 保存場所
 	vector<TString> sdircand; // 保存ディレクトリの候補
@@ -396,9 +396,9 @@ void print(){
 		int returnval = system(command);
 		//printf("%d\n",returnval);
 		if(returnval == 0){
-			TString fname = Form("%s/root%d_%d.png",
+			TString fname = Form("%s/root%d_%d.%s",
 				sdircand[i].Data(),
-				TDatime().GetDate(),TDatime().GetTime());
+				TDatime().GetDate(),TDatime().GetTime(),ext.Data());
 
 			//printf("%s\n",fname.Data());
 			gPad->GetCanvas()->SaveAs(fname.Data());
@@ -664,28 +664,72 @@ void SetAPStyle(){
 }
 
 void ReDrawSlideStyle(){
-	gPad->SetFrameLineWidth(2);
-	gStyle->SetLineWidth(2);
+	gPad->GetCanvas()->SetWindowSize (800 + 2, 600+ 24);
+	int linewidth =3;
+	gPad->SetFrameLineWidth(linewidth);
+	gStyle->SetLineWidth(linewidth);
+	gPad->SetMargin(0.11,0.04,0.08,0.06);
 	TH1* h1 = (TH1*)GetCurrentHist();	
 	h1->Draw();
 	h1->SetTitle(";;;");
 	h1->SetStats(0);
 	int fontid=63;
-	float fsize = 22; // フォントサイズ(px)
+	float fsize = 28; // フォントサイズ(px)
 	h1->SetLabelFont(fontid,"XYZ");
 	h1->SetLabelFont(fontid,"");
 	h1->SetLabelSize(fsize,"XYZ");
 	h1->SetLabelSize(fsize,"");
-	h1->SetLabelOffset (0.02,"XY");
+	h1->SetLabelOffset (0.03,"XY");
 	gPad->SetGrid(0,0);
 	gPad->SetTicks();
 	h1->GetXaxis()->SetNdivisions(7);
 	h1->GetYaxis()->SetNdivisions(7);
-	h1->SetLineWidth(2);
+	h1->SetLineWidth(linewidth);
 	h1->SetFillStyle(0);
 	h1->SetLineColor(0);
 	h1->SetLineColor(1);
 	gPad->Modified();
 	gPad->Update();
 	gPad->Modified();
+}
+
+void ReDrawPaperStyle2Djpg(){
+	int linewidth =0;
+	gPad->SetFrameLineWidth(linewidth);
+	gStyle->SetLineWidth(linewidth);
+	gStyle->SetPalette(kGreyScale);
+	TColor::InvertPalette();
+	TH1* h1 = (TH1*)GetCurrentHist();	
+	h1->Draw("col");
+	h1->SetTitle(";;;");
+	h1->SetStats(0);
+	h1->SetLabelOffset (100,"XY");
+	gPad->SetGrid(0,0);
+	h1->SetLineWidth(linewidth);
+	h1->SetFillStyle(0);
+	gPad->Modified();
+	gPad->Update();
+	gPad->Modified();
+}
+
+void ReDrawPaperStyle2Dframe(){
+	TH1* h1 = (TH1*)GetCurrentHist();	
+	float minX = h1->GetXaxis()->GetXmin();
+	float maxX = h1->GetXaxis()->GetXmax();
+	float minY = h1->GetYaxis()->GetXmin();
+	float maxY = h1->GetYaxis()->GetXmax();
+
+	gPad->Clear();
+	gStyle->SetTitleStyle(0);
+	gPad->SetFillStyle(0);
+	TH1F *frame = gPad->DrawFrame( minX, minY, maxX, maxY);
+	frame->SetFillStyle(0);
+	gStyle->SetLineWidth(1);
+	gPad->SetGrid(0,0);
+	gPad->SetTicks();
+	frame->GetXaxis()->SetNdivisions(7);
+	frame->GetYaxis()->SetNdivisions(7);
+	gPad->GetFrame()->SetFillStyle(0);
+
+
 }
