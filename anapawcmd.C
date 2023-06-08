@@ -6,7 +6,7 @@ void APCRver(){
 //////////////////////////////////////////////////////
 
 // グローバル変数の定義
-TString defaultdrawopt = "colz"; 
+TString defaultdrawopt = "hist colz"; 
 vector<double> gDoubleVec;
 
 // ANAPAW準拠のユーザー用関数
@@ -176,7 +176,7 @@ void DrawHist(TH1* h1, TString opt){
 	if(gPad == 0x0) TCanvas *c1 = new TCanvas(); // キャンバスがない場合、生成
 	if(statexist) st->SetY1NDC(staty1ndc);
 	CdNPad(); // キャンバス分割している場合は次のPadに移る。(なければしない)
-	h1->SetXTitle(Form("Histogram ID = %d",GetObjID(h1)));
+	//h1->SetXTitle(Form("Histogram ID = %d",GetObjID(h1)));
 	h1->Draw(opt);
 
 	// 情報表示
@@ -184,6 +184,11 @@ void DrawHist(TH1* h1, TString opt){
 	tfilename->SetNDC(1);
 	tfilename->SetTextAlign(11);
 	tfilename->Draw();
+	TText *t_hid = new TText(0.90,0.05,Form("Histogram ID = %d",GetObjID(h1)));
+	t_hid->SetNDC(1);
+	t_hid->SetTextAlign(32);
+	t_hid->Draw();
+
 	TDatime *currenttime = new TDatime();
 	TText *tdatetime = new TText(0.99,0.99,currenttime->AsSQLString() );
 	tdatetime->SetNDC(1);
@@ -699,8 +704,18 @@ void ReDrawPaperStyle2Djpg(){
 	int linewidth =0;
 	gPad->SetFrameLineWidth(linewidth);
 	gStyle->SetLineWidth(linewidth);
-	gStyle->SetPalette(kGreyScale);
-	TColor::InvertPalette();
+	gPad->SetMargin(0.16,0.08,0.16,0.08); // lrbt
+	//gStyle->SetPalette(kGreyScale);
+	//TColor::InvertPalette();
+  const Int_t NRGBs = 2;   
+  const Int_t NCont = 128;  
+  Double_t stops[NRGBs] = { 0.00, 1.00 }; 
+  Double_t Red[NRGBs]   = { 1.00, 0.10 }; 
+  Double_t Green[NRGBs] = { 1.00, 0.10 }; 
+  Double_t Blue[NRGBs]  = { 1.00, 0.10 }; 
+  TColor::CreateGradientColorTable(NRGBs, stops, Red, Green, Blue, NCont);
+  gStyle->SetNumberContours(NCont);
+
 	TH1* h1 = (TH1*)GetCurrentHist();	
 	h1->Draw("col");
 	h1->SetTitle(";;;");
