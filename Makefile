@@ -1,5 +1,5 @@
 apmode : apmode.cc
-	g++ `root-config --cflags --libs` apmode.cc -o apmode
+	g++ apmode.cc -o apmode `root-config --cflags --libs`
 clean :
 	rm -f apmode
 

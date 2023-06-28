@@ -6,7 +6,7 @@ void APCRver(){
 //////////////////////////////////////////////////////
 
 // グローバル変数の定義
-TString defaultdrawopt = "hist colz"; 
+TString defaultdrawopt = "colz"; 
 vector<double> gDoubleVec;
 
 // ANAPAW準拠のユーザー用関数
@@ -148,7 +148,7 @@ void S_hNorB(int kind, TString opt = defaultdrawopt){
 			break; 
 		}
 		if(kind==1){
-			if(currentHID < li->GetEntries() ){ currentHID ++; }
+			if(currentHID < li->GetEntries()-1 ){ currentHID ++; }
 			else{ currentHID = -1; }
 		}
 		if(kind==2){
@@ -381,6 +381,7 @@ void hupdate(){
 	if(gPad == 0x0) return;
 	gPad->Modified();
 	gPad->Update();
+	gPad->Modified();
 }
 
 void print(TString ext="png"){
@@ -571,6 +572,10 @@ void figali(float xmin, float xmax,
 
 	//	printf("for me   : %#8g\t%#8g\t%#8g\n",fit1->GetParameter(1), calcedpeak, calcedpeakerr ); 
 		printf("\n");
+		printf("Paramaters\n");
+		printf("%#6g\t %#6g\t %#6g\t %#6g\t %#6g\n",
+			fit1->GetParameter(0), fit1->GetParameter(1), fit1->GetParameter(2), fit1->GetParameter(3), fit1->GetParameter(4));
+		
 	}
 
 	//xrange(initialmin, initialmax);
@@ -612,6 +617,33 @@ void figali(float xmin, float xmax,
 	pt1->Draw();
 	pt2->Draw();
 }
+
+
+void hdump(){
+	FILE *fout = fopen("plots/hdump.txt", "w");
+	
+	TH1* h1 = (TH1*)GetCurrentHist();
+  if(h1 == 0x0) return;
+	int nbin = h1->GetNbinsX();
+	for(int n=0;n<nbin;n++){
+		float x = h1->GetBinCenter(n);
+		float y = h1->GetBinContent(n);
+		fprintf(fout,"%f %f\n",x,y);
+	}	
+	fclose(fout);
+	printf("Dumped at plots/hdump.txt\n");
+}
+
+// Tree->Draw()で作ったhistを、ls で表示されるリストに追加する
+void adl(){
+  TH1* h1 = (TH1*)GetCurrentHist();
+  TH1D* h1_copied = (TH1D*)h1->Clone();
+  h1_copied->SetName(Form("h%08x\n",rand()));
+  gDirectory->GetListOfKeys()->AddLast(h1_copied);
+	DrawHist(h1_copied);
+	hupdate();
+}
+
 
 void switchAPmode(){
 	TString apmodepath = "/home/kohda/.rootmacros/AnapawCommandsForROOT/apmode";
