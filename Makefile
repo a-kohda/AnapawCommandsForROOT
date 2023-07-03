@@ -13,4 +13,8 @@ fetch :
 	git merge origin/master
 
 doxygen :
-	doxygen
+	doxygen && \
+	cd latex && \
+	make && \
+	cd - && \
+	cp latex/refman.pdf ./ReferenceManual.pdf
