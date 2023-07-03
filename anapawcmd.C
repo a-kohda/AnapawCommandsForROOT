@@ -19,6 +19,10 @@ vector<double> gDoubleVec;
 // ANAPAW準拠のユーザー用関数
 // 基本操作用の関数
 void hlist();                // Index番号付きでヒストグラムのリストを表示する
+
+/**
+* hlistへのエイリアス。ROOTファイルに含まれるヒストグラムの一覧表示
+*/
 void (*ls)() = hlist;        // "hlist()"は"ls()"でも可
 //void ht(int n, TString opt); // n番目のhistをDraw (オプション指定あり)
 //void ht(TString opt);        // 現在表示されているhistのoptionを変更して再Draw

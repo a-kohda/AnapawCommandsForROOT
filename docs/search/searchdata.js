@@ -1,9 +1,10 @@
 var indexSectionsWithContent =
 {
-  0: "ag",
+  0: "agl",
   1: "a",
   2: "g",
-  3: "a"
+  3: "l",
+  4: "a"
 };
 
 var indexSectionNames =
@@ -11,7 +12,8 @@ var indexSectionNames =
   0: "all",
   1: "files",
   2: "functions",
-  3: "pages"
+  3: "variables",
+  4: "pages"
 };
 
 var indexSectionLabels =
@@ -19,6 +21,7 @@ var indexSectionLabels =
   0: "全て",
   1: "ファイル",
   2: "関数",
-  3: "ページ"
+  3: "変数",
+  4: "ページ"
 };
 
