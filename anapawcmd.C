@@ -126,6 +126,12 @@ void hlist(){
 	}
 }
 
+/**
+* @fn
+* HIDを数値指定して、そのヒストグラムを表示(Draw)する。
+* @param HID 表示するヒストグラムID
+* @param option Draw option
+*/
 void ht(int n, TString opt = defaultdrawopt){
 	TList* li = GetHistList();
 	TH1* h1 = (TH1*)li->At(n);
