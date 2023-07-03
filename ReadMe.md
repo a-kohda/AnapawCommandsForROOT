@@ -30,7 +30,7 @@ gROOT->ProcessLine("SetAPStyle();");
 ```
 ### 利用可能なコマンド一覧
 - 使える関数の一覧はここにあります。(テスト中)
--- https://a-kohda.github.io/AnapawCommandsForROOT/anapawcmd_8C.html#details
+  - https://a-kohda.github.io/AnapawCommandsForROOT/anapawcmd_8C.html#details
 - ls()
   - ヒストグラムの一覧を表示。表示対象は「.ls」で表示されるもの。HID(ヒストグラムID)、次元数、タイトルを表示。
 
