@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.9.7"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ANAPAW Commands for ROOT: ANAPAW Commands for ROOT</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">ANAPAW Commands for ROOT
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 構築: Doxygen 1.9.7 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() {
+  initMenu('',true,false,'search.php','検索');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */
+</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">読み取り中…</div>
+<div class="SRStatus" id="Searching">検索中…</div>
+<div class="SRStatus" id="NoMatches">一致する文字列を見つけられません</div>
+</div>
+</div>
+</div>
+</div>
+
+</div><!-- top -->
+<div><div class="header">
+  <div class="headertitle"><div class="title">ANAPAW Commands for ROOT</div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p><a class="anchor" id="autotoc_md0"></a></p><ul>
+<li>ROOTのヒストグラムを少ないタイプ数で操作出来るようにします。</li>
+<li>コマンド名(関数名)は基本的にANAPAWに準拠してます。</li>
+<li>ROOTの標準機能とは干渉しないようにしてます。</li>
+<li>まだテスト中です。</li>
+<li>最低限の機能は出来たので公開します。</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md1"></a>
+内容物</h1>
+<ul>
+<li>ReadMe.md<ul>
+<li>これ。</li>
+</ul>
+</li>
+<li><a class="el" href="anapawcmd_8C.html" title="せつめい">anapawcmd.C</a><ul>
+<li>本体。後述のANAPAWモードを使わない場合は、このファイルしか使わない。</li>
+</ul>
+</li>
+<li>apmode / apmode.cc<ul>
+<li>括弧なしコマンド(ANAPAWモードでの入力)を使うための実行ファイル。</li>
+</ul>
+</li>
+<li>Makefile<ul>
+<li>apmode をビルドするために使う。anapawcmd.Cだけ使う人は要らない。</li>
+</ul>
+</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md2"></a>
+使い方</h1>
+<h2><a class="anchor" id="autotoc_md3"></a>
+設定</h2>
+<ul>
+<li><a class="el" href="anapawcmd_8C.html" title="せつめい">anapawcmd.C</a> をダウンロードして適当なところに設置してください。</li>
+<li>ROOT起動後に .L /path/to/anapawcmd.C とすると読み込まれて、コマンドが使えるようになります。</li>
+<li>自動読み込みを設定する場合はrootlogon.Cに以下を追記します。 <div class="fragment"><div class="line">gROOT-&gt;ProcessLine(&quot;.L /path/to/anapawcmd.C&quot;);</div>
+<div class="line">gROOT-&gt;ProcessLine(&quot;SetAPStyle();&quot;);</div>
+</div><!-- fragment --> </li>
+</ul>
+<h2><a class="anchor" id="autotoc_md4"></a>
+利用可能なコマンド一覧</h2>
+<ul>
+<li>ls()<ul>
+<li>ヒストグラムの一覧を表示。表示対象は「.ls」で表示されるもの。HID(ヒストグラムID)、次元数、タイトルを表示。</li>
+</ul>
+</li>
+<li>ht(hid)<ul>
+<li>hidを数値指定して、そのヒストグラムを表示(Draw)する。第二引数でDraw optionの指定可。</li>
+</ul>
+</li>
+<li>hn() / hb()<ul>
+<li>現在表示中のヒストグラムの次の(/前の)ヒストグラムを表示する。引数でDraw optionの指定可。</li>
+</ul>
+</li>
+<li>lgx() / lgy() / lgz()<ul>
+<li>x / y / z 軸をLogスケールにする</li>
+</ul>
+</li>
+<li>lnx() / lny() / lnz()<ul>
+<li>x / y / z 軸をリニアスケールにする</li>
+</ul>
+</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md5"></a>
+不完全だけど使えるコマンド</h2>
+<ul>
+<li>sly()<ul>
+<li>2次元ヒストグラムをx方向にスライスしてy軸への射影した1次元ヒストグラムを作成する。<ul>
+<li>本家ANAPAWではスライス数を指定するが、ここでは今の所、元の2次元ヒストグラムのx方向の分割数でしかスライスできない。そして、slx()はまだ出来てない。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>blowx(min, max) / blowy(min, max)<ul>
+<li>ANAROOT準拠。x/y軸の表示範囲を変更する。(本家ANAPAW/ANAROOTでは新しいヒストグラムとして再生成するが、これは単に表示エリアを変えるだけ)</li>
+</ul>
+</li>
+<li>blowx() / blowy() (引数なし)<ul>
+<li>x/y軸の表示範囲を初期状態に戻す。(unzoomする)</li>
+</ul>
+</li>
+<li>showstat() / delstat()<ul>
+<li>独自機能。統計ボックスを表示 (/非表示に) する。</li>
+</ul>
+</li>
+<li>print()<ul>
+<li>現在表示中のヒストグラム(gPad)に適当なファイル名をつけてPNG画像として保存する。保存先ディレクトリは、./png, ../png, ./plots, ...と順に探し、最初に見つかったディレクトリに保存する。<ul>
+<li>注意 : ディレクトリ検索にsystem関数を使っています。Linux以外のOSでは多分動作しないです。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>adl()<ul>
+<li>独自機能。tree-&gt;Draw()等で作成したヒストグラムをリストに登録する。(ヒストグラムIDが与えられて、後からそのIDを使って呼び出せる。)</li>
+</ul>
+</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md6"></a>
+ANAPAWモード (apmode, ベータ版)</h1>
+<ul>
+<li>ANAPAWみたいに括弧なしでコマンドが使えるようにするためのプログラムです。<ul>
+<li>基本的に文字列処理で "ht 1" -&gt; "ht(1)" のように整形してるだけです。</li>
+</ul>
+</li>
+<li>試してみたい人は、ソースコード内にanapawcmd.Cへのフルパスがベタ書きされてるのでそこを直してからmakeしてください。</li>
+<li>通常のROOTを起動する代わりにこのファイルを実行すると使えます。</li>
+<li>ROOT本来の機能は問題なく使えるはずです。</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md7"></a>
+既知のバグ</h1>
+<ul>
+<li>ROOT5で動かない。デフォルト引数が二重定義になってるとか言われる。気が向いたら直す。<ul>
+<li><strike>多分直りました。但し、makeする時のROOTのバージョンと、実行するときのROOTのバージョンが同じでないと落ちます。(2023/3/3)</strike><ul>
+<li>ROOT5.34/38 on Ubuntu16.04でテストしたところデフォルト引数が二重定義のエラーが依然として出る。解決策はわかったがまだ修正してない。同じ環境でapmodeをmakeしようとすると、エラーが出る。Makefileの表記順が間違ってるらしい。未修正。(2023/6/8)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>DrawHistで「HistogramID」の表示が、zoneで2行以上にした時に数値ラベルと重なる (2023/3/28)<ul>
+<li>表示位置設定がx軸からの相対位置になっているのが問題。そのうち直す。</li>
+</ul>
+</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md8"></a>
+更新情報</h1>
+<ul>
+<li>2023/6/28<ul>
+<li>adlを使えるようにした。Makefileを修正した。(ライブラリの指定順が悪くてUbuntuでコンパイルが通らなかったのを修正。) </li>
+</ul>
+</li>
+</ul>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+構築:&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.7
+</small></address>
+</body>
+</html>
