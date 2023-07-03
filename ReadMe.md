@@ -5,6 +5,10 @@
 - まだテスト中です。
 - 最低限の機能は出来たので公開します。
 
+## ダウンロード
+- ソースコードはGitHubにあります。
+  - https://github.com/a-kohda/AnapawCommandsForROOT
+
 ## 内容物
 - ReadMe.md
   - これ。
