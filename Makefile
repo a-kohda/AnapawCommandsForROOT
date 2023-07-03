@@ -7,7 +7,7 @@ upload :
 	doxygen && \
 	git add -A && \
 	git commit -m "Update" && \
-	git push origin master
+	git push -f origin master
 
 fetch :
 	git fetch && \
