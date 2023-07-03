@@ -1,3 +1,10 @@
+/**
+* @file
+* @brief せつめい
+* @author A. Kohda
+* @date 2023. 3.29
+*/
+
 // バージョン情報
 void APCRver(){
 	printf("  ANAPAW Commands for ROOT Ver 1.09    \n");
@@ -50,6 +57,9 @@ void SetAPStyle();           // Histの見栄えをANAPAWっぽいstyleにする
 void CdNPad();
 
 // 関数エイリアス
+/**
+* 現在表示中のヒストグラムのポインタを取得する
+*/
 TH1* gH1(){ return GetCurrentHist(true); }
 
 ///////// 関数・クラスの実体記述部 //////////
