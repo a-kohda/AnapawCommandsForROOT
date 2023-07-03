@@ -2,13 +2,13 @@
 * @file
 * @brief せつめい
 * @author A. Kohda
-* @date 2023. 3.29
+* @date 2023. 7. 3
 */
 
 // バージョン情報
 void APCRver(){
-	printf("  ANAPAW Commands for ROOT Ver 1.09    \n");
-	printf("  Last Updated 2023. 3.29 by A. Kohda  \n");
+	printf("  ANAPAW Commands for ROOT Ver 1.10    \n");
+	printf("  Last Updated 2023. 7. 3 by A. Kohda  \n");
 }
 //////////////////////////////////////////////////////
 
@@ -18,6 +18,9 @@ vector<double> gDoubleVec;
 
 // ANAPAW準拠のユーザー用関数
 // 基本操作用の関数
+/**
+* ROOTファイルに含まれるヒストグラム等の一覧表示。行頭にヒストグラムIDも表示。
+*/
 void hlist();                // Index番号付きでヒストグラムのリストを表示する
 
 /**
@@ -127,10 +130,9 @@ void hlist(){
 }
 
 /**
-* @fn
 * HIDを数値指定して、そのヒストグラムを表示(Draw)する。
-* @param HID 表示するヒストグラムID
-* @param option Draw option
+* @param n 表示するヒストグラムID
+* @param opt Draw Option
 */
 void ht(int n, TString opt = defaultdrawopt){
 	TList* li = GetHistList();
