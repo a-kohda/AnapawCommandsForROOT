@@ -55,6 +55,7 @@ void lnz();                  // z軸をリニアスケールにする
 
 
 // このマクロ内で使用する関数
+/// @cond
 TH1* GetCurrentHist(bool quiet = false);// 現在表示されているhistのポインタを返す
 int  GetObjID(TObject* o1);  // ヒスト等のオブジェクトがリストの何番目にあるかを返す
 TList* GetHistList();        // .lsで表示されるオブジェクトのリスト
@@ -62,6 +63,7 @@ void DrawHist(TH1* h1, TString opt = defaultdrawopt);
 //void DeleteObjFromGPad(TString name); // gPad上にある(TGraphなどの)オブジェクトを消す(nameで指定)
 void SetAPStyle();           // Histの見栄えをANAPAWっぽいstyleにする
 void CdNPad();
+/// @endcond
 
 // 関数エイリアス
 /**
@@ -71,7 +73,7 @@ TH1* gH1(){ return GetCurrentHist(true); }
 
 ///////// 関数・クラスの実体記述部 //////////
 
-
+/// @cond
 TH1* GetCurrentHist(bool quiet){
 	TH1* h1;
 	if( gPad == 0x0 ){
@@ -82,6 +84,7 @@ TH1* GetCurrentHist(bool quiet){
 	}
 	return h1;
 }
+
 
 int GetObjID(TObject* o1){
 	TList* li = GetHistList();
@@ -103,6 +106,7 @@ TList* GetHistList(){
 	}
 	return li;
 }
+/// @endcond
 
 void hlist(){
 	printf("\n  ===> Histogram List\n\n");
@@ -150,6 +154,7 @@ void ht(TString opt){
 	DrawHist(h1, opt);
 }
 
+/// @cond
 void S_hNorB(int kind, TString opt = defaultdrawopt){
 	if(kind != 1 && kind != 2) return;
 	// kind 1:hn, 2:hb
@@ -180,11 +185,13 @@ void S_hNorB(int kind, TString opt = defaultdrawopt){
 	}
 	if(exdraw){ DrawHist(h1_2, opt); }
 }
+/// @endcond
 
 void hn(TString opt = defaultdrawopt){ S_hNorB(1, opt); }
 void hb(TString opt = defaultdrawopt){ S_hNorB(2, opt); }
 
 
+/// @cond
 void DrawHist(TH1* h1, TString opt){
 	// なぜか2回目にDrawした時にstat boxのサイズ(y方向のみ)が変わってしまうのを防ぐ措置
 	TPaveStats *st = (TPaveStats*)h1->FindObject("stats");
@@ -220,6 +227,7 @@ void DrawHist(TH1* h1, TString opt){
 	printf(" Draw ID:%3d  %s\n",GetObjID(h1),h1->GetTitle());
   defaultdrawopt = opt;
 }
+/// @endcond
 
 void lnx(){ gPad->SetLogx(0); }
 void lgx(){ gPad->SetLogx(1); }
