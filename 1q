@@ -42,12 +42,12 @@ void (*ls)() = hlist;        // "hlist()"は"ls()"でも可
 //void fiterf(float xmin, float xmax); // 誤差関数でfit
 
 // 表示調整系
-void lgx();                  /*!< x軸をログスケールにする   */
-void lnx();                  /*!< x軸をリニアスケールにする */
-void lgy();                  /*!< y軸をログスケールにする   */
-void lny();                  /*!< y軸をリニアスケールにする */
-void lgz();                  /*!< z軸をログスケールにする   */
-void lnz();                  /*!< z軸をリニアスケールにする */
+void lgx();                  /* x軸をログスケールにする  */
+void lnx();                  // x軸をリニアスケールにする
+void lgy();                  // y軸をログスケールにする
+void lny();                  // y軸をリニアスケールにする
+void lgz();                  // z軸をログスケールにする
+void lnz();                  // z軸をリニアスケールにする
 
 // 2次元 -> 1次元
 //void sly(int n = -1);        // 2次元ヒストグラムをスライスしてy軸への射影

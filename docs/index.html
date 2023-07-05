@@ -94,7 +94,7 @@ $(function() {
 <li>これ。</li>
 </ul>
 </li>
-<li><a class="el" href="anapawcmd_8C.html" title="せつめい">anapawcmd.C</a><ul>
+<li><a class="el" href="anapawcmd_8C.html" title="ANAPAW Commands for ROOT で使える関数の定義">anapawcmd.C</a><ul>
 <li>本体。後述のANAPAWモードを使わない場合は、このファイルしか使わない。</li>
 </ul>
 </li>
@@ -112,7 +112,7 @@ $(function() {
 <h2><a class="anchor" id="autotoc_md4"></a>
 設定</h2>
 <ul>
-<li><a class="el" href="anapawcmd_8C.html" title="せつめい">anapawcmd.C</a> をダウンロードして適当なところに設置してください。</li>
+<li><a class="el" href="anapawcmd_8C.html" title="ANAPAW Commands for ROOT で使える関数の定義">anapawcmd.C</a> をダウンロードして適当なところに設置してください。</li>
 <li>ROOT起動後に .L /path/to/anapawcmd.C とすると読み込まれて、コマンドが使えるようになります。</li>
 <li>自動読み込みを設定する場合はrootlogon.Cに以下を追記します。 <div class="fragment"><div class="line">gROOT-&gt;ProcessLine(&quot;.L /path/to/anapawcmd.C&quot;);</div>
 <div class="line">gROOT-&gt;ProcessLine(&quot;SetAPStyle();&quot;);</div>
@@ -137,11 +137,11 @@ $(function() {
 <li>現在表示中のヒストグラムの次の(/前の)ヒストグラムを表示する。引数でDraw optionの指定可。</li>
 </ul>
 </li>
-<li>lgx() / lgy() / lgz()<ul>
+<li><a class="el" href="anapawcmd_8C.html#a5744b72548dd919d4fe2f7c39c82aebb">lgx()</a> / <a class="el" href="anapawcmd_8C.html#ac54ba5cf0d63db4a64ebb384726c5648">lgy()</a> / <a class="el" href="anapawcmd_8C.html#afd1ac3758d18b33e506b75e65b8b6ece">lgz()</a><ul>
 <li>x / y / z 軸をLogスケールにする</li>
 </ul>
 </li>
-<li>lnx() / lny() / lnz()<ul>
+<li><a class="el" href="anapawcmd_8C.html#a2d9f401fd873a661407395a597925e74">lnx()</a> / <a class="el" href="anapawcmd_8C.html#a6545e372a28e13af9929b37f2a49badd">lny()</a> / <a class="el" href="anapawcmd_8C.html#afc6c97556e38fd1a6e7910d17faea6ef">lnz()</a><ul>
 <li>x / y / z 軸をリニアスケールにする</li>
 </ul>
 </li>
@@ -203,6 +203,7 @@ ANAPAWモード (apmode, ベータ版)</h1>
 </li>
 <li>DrawHistで「HistogramID」の表示が、zoneで2行以上にした時に数値ラベルと重なる (2023/3/28)<ul>
 <li>表示位置設定がx軸からの相対位置になっているのが問題。そのうち直す。</li>
+<li>zoneでキャンバス分割した時に一部環境で最初の枠にしか描画できない。</li>
 </ul>
 </li>
 </ul>
