@@ -823,4 +823,3 @@ void ReDrawPaperStyle2Dframe(){
 }
 /// @endcond
 
-void switchAPmode(){
