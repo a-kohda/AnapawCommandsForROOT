@@ -332,6 +332,16 @@ void blowy(){ // 引数なしバージョンはunzoom
 	gPad->Modified();
 }
 
+/*! 単なるblowはblowxの代用(暫定) */
+void blow(float xmin=0, float xmax=-1){
+	if(xmin > xmax){
+		blowx();
+	}else{
+		blowx(xmin,xmax);
+	}
+}
+
+
 void mami(float min = 1, float max = -1){ 
 	TH2 *h1 = (TH2*)GetCurrentHist();
 	if(h1 == 0x0) return;
