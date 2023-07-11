@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <vector>
 #include <TRint.h>
+#include <string.h>
 
 class TRint_apcr : public TRint{
 	public:
@@ -10,6 +11,9 @@ class TRint_apcr : public TRint{
 };
 
 int main(int argc, char* argv[]){    
+
+	
+
     TRint_apcr *app = new TRint_apcr("App", &argc, argv);
 		app->SetPrompt("APCR> ");
     app->Run();
@@ -19,7 +23,20 @@ int main(int argc, char* argv[]){
 TRint_apcr::TRint_apcr(const char *appClassName, Int_t *argc, char **argv,
 		   void *options, Int_t numOptions, Bool_t noLogo)
 : TRint(appClassName, argc, argv, options, numOptions, kTRUE){
-	TRint::ProcessLine(".L /home/kohda/.rootmacros/AnapawCommandsForROOT/anapawcmd.C");
+
+	// このプログラムが置かれてる場所を取得
+	// 参考:https://ken-ohwada.hatenadiary.org/entry/2021/01/03/120707
+	char path[1024];
+	readlink(Form("/proc/%d/exe",getpid()), path, 1024);
+	//printf("link:%s\n",path);
+	// 最後の / 以降を消してディレクトリにする
+	char *p;
+	p = strrchr(path,'/');
+	if(p!=NULL) *(p+1)='\0';
+	//printf("dir:%s\n",path);
+
+	//TRint::ProcessLine(".L /home/kohda/.rootmacros/AnapawCommandsForROOT/anapawcmd.C");
+	TRint::ProcessLine(Form(".L %sanapawcmd.C",path));
 	TRint::ProcessLine("SetAPStyle();");
 
 }
