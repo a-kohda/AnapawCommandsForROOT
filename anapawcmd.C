@@ -2,14 +2,14 @@
 * @file
 * @brief ANAPAW Commands for ROOT で使える関数の定義
 * @author A. Kohda
-* @date 2023. 7. 5
+* @date 2023. 7. 11
 */
 
 // バージョン情報
 /// @cond
 void APCRver(){
 	printf("  ANAPAW Commands for ROOT Ver 1.10    \n");
-	printf("  Last Updated 2023. 7. 5 by A. Kohda  \n");
+	printf("  Last Updated 2023. 7.11 by A. Kohda  \n");
 }
 /// @endcond
 //////////////////////////////////////////////////////
@@ -747,7 +747,7 @@ void SetAPStyle(){
 		gStyle->SetTitleSize(fsize, "XYZ");
 		gStyle->SetTitleFontSize(fsize*1.2);
 		gStyle->SetTextSize(fsize);
-		gStyle->SetLegendTextSize(fsize);
+		//gStyle->SetLegendTextSize(fsize);
 	}
 	gStyle->SetHistFillColor(7);
 	gStyle->SetHistFillStyle(3001);
