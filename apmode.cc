@@ -107,6 +107,7 @@ Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
 		IsAPcmd += tsblocks[0].EqualTo("adl");
 		IsAPcmd += tsblocks[0].EqualTo("blow");
 		IsAPcmd += tsblocks[0].EqualTo("htofunc");
+		IsAPcmd += tsblocks[0].EqualTo("mail");
 	}
 
 	TString formedAPcmd;

@@ -704,28 +704,27 @@ void hdump(){
 void htofunc(TString fname = "hfunc1");
 void htofunc(TString fname){
 	//TString fname = "hfunc1"; 
-	FILE *fout = fopen(Form("plots/%s.c",fname.Data()), "w");
+	FILE *fout = fopen(Form("f%s.c",fname.Data()), "w");
 	
-	fprintf(fout,"Double_t %s(Double_t *x, Double_t *par){\n",fname.Data());
-	fprintf(fout,"\tFloat_t xx =x[0];\n");
-	fprintf(fout,"\tDouble_t f = 0;\n");
+	fprintf(fout,"double f%s(double x, double p0){\n",fname.Data());
+	fprintf(fout,"\tdouble f=0;\n");
 
 	TH1* h1 = (TH1*)GetCurrentHist();
   if(h1 == 0x0) return;
 	int nbin = h1->GetNbinsX();
 	for(int n=0;n<nbin;n++){
-		float x0 = h1->GetBinLowEdge(n);
-		float x1 = h1->GetBinLowEdge(n+1);
-		float y = h1->GetBinContent(n);
-		fprintf(fout,"\tif( %f<=xx && xx<%f ) f = %f * par[0];\n",x0,x1,y);
+		float x0 = h1->GetBinLowEdge(n+1);
+		float x1 = h1->GetBinLowEdge(n+2);
+		float y = h1->GetBinContent(n+1);
+		fprintf(fout,"\tif( %f<=x && x<%f ) f = %f * p0;\n",x0,x1,y);
 	}	
 	fprintf(fout,"\treturn f;\n");
 	fprintf(fout,"}\n");
 	fclose(fout);
-	printf("Dumped at plots/hfunc.c\n");
+	printf("Created at f%s.c\n",fname.Data());
 	printf("When you use this function for fit, type;\n");
-	printf("\t> .L plots/%s.c;\n",fname.Data());
-	printf("\t> TF1* f%s = new TF1(\"%s\",%s,0,4000,1);\n",fname.Data(),fname.Data(),fname.Data());
+	printf("\t> .L f%s.c\n",fname.Data());
+	printf("\t> TF1* tf%s = new TF1(\"tf%s\",\"f%s(x,[0])\",0,4000);\n",fname.Data(),fname.Data(),fname.Data());
 }
 
 // Tree->Draw()で作ったhistを、ls で表示されるリストに追加する
