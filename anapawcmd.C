@@ -459,6 +459,24 @@ void print(TString ext="png"){
 	if(!saved) printf(" Not saved because candidate directories not found.\n");
 }
 
+/*! キャンバスの表示内容を画像化してメール送信 */
+/*! 環境変数 APCR_MAILTO に送信先メールアドレスを設定 */
+void mail(){
+	char *mailto;
+	mailto = getenv("APCR_MAILTO");
+	if(mailto==NULL){
+		printf("Error : Environmental Variable APCR_MAILTO is not setting!\n");
+		return;
+	}
+	//printf("test:%s\n",mailto);
+	if(gPad == 0x0) return;
+	TString tmpfilename = Form("/tmp/roottmpimg/img%08x.png",rand());
+	system("mkdir -p /tmp/roottmpimg");
+	gPad->GetCanvas()->SaveAs(tmpfilename.Data());
+	system(Form("echo \"\"|mail -s \"\" -a %s %s",tmpfilename.Data(), mailto));
+}
+
+
 void zone(int x, int y){
 	if(gPad == 0x0) TCanvas *c1 = new TCanvas();
 	TH1* h1 = (TH1*)GetCurrentHist();
