@@ -466,14 +466,19 @@ void mail(){
 	mailto = getenv("APCR_MAILTO");
 	if(mailto==NULL){
 		printf("Error : Environmental Variable APCR_MAILTO is not setting!\n");
+		printf("You can set your mail adress by using :\n");
+		printf("   > setenv(\"APCR_MAILTO\",\"your@mail.adress.jp\",1)\n");
 		return;
 	}
 	//printf("test:%s\n",mailto);
 	if(gPad == 0x0) return;
 	TString tmpfilename = Form("/tmp/roottmpimg/img%08x.png",rand());
 	system("mkdir -p /tmp/roottmpimg");
+	int tempErrorIgnoreLevel = gErrorIgnoreLevel;
+	gErrorIgnoreLevel = 2000; // save as 時に Infoを出さない
 	gPad->GetCanvas()->SaveAs(tmpfilename.Data());
-	system(Form("echo \"\"|mail -s \"\" -a %s %s",tmpfilename.Data(), mailto));
+	gErrorIgnoreLevel = tempErrorIgnoreLevel; // 戻しておく
+	system(Form("echo \"\"|mail -s \"ROOT\" -a %s %s",tmpfilename.Data(), mailto));
 }
 
 
@@ -691,7 +696,7 @@ void hdump(){
 	TH1* h1 = (TH1*)GetCurrentHist();
   if(h1 == 0x0) return;
 	int nbin = h1->GetNbinsX();
-	for(int n=0;n<nbin;n++){
+	for(int n=0;n<nbin+2;n++){
 		float x = h1->GetBinCenter(n);
 		float y = h1->GetBinContent(n);
 		fprintf(fout,"%f %f\n",x,y);
@@ -699,6 +704,50 @@ void hdump(){
 	fclose(fout);
 	printf("Dumped at plots/hdump.txt\n");
 }
+
+void hdump2D(){
+	FILE *fout = fopen("hdump2D.tdm", "w");
+	
+	TH1* h1 = (TH2*)GetCurrentHist();
+  if(h1 == 0x0) return;
+
+	int minbx = h1->GetXaxis()->FindBin(2.42) -1;
+	int maxbx = h1->GetXaxis()->FindBin(2.68) +1;
+	int minby = h1->GetYaxis()->FindBin(18.5) -1;
+	int maxby = h1->GetYaxis()->FindBin(24.5) +1;
+
+	int nxbin = h1->GetXaxis()->GetNbins();
+	int nybin = h1->GetYaxis()->GetNbins();
+	printf("Info : (nx,xy)=(%d,%d)",maxbx-minbx+1,maxby-minby+1);
+
+	fprintf(fout,"READ MESH\nFOR X=");
+	for(int nx=0;nx<nxbin+2;nx++){
+		if(nx<minbx||maxbx<nx) continue;
+		float x = h1->GetXaxis()->GetBinCenter(nx);
+		fprintf(fout,"%#5g ",x);
+	}
+	fprintf(fout,"\n");
+	for(int ny=0;ny<nybin+2;ny++){
+		if(ny<minby||maxby<ny) continue;
+		float y = h1->GetYaxis()->GetBinCenter(ny);		
+		fprintf(fout,"Y=%#5g Z=",y);
+		for(int nx=0;nx<nxbin+2;nx++){
+			if(nx<minbx||maxbx<nx) continue;
+			float x = h1->GetXaxis()->GetBinCenter(nx);
+			float z = h1->GetBinContent(nx,ny);
+			//fprintf(fout,"%f %f %f\n",x,y,z);
+			//fprintf(fout,"%#5g ",z);
+			if(z<1)z=1;
+			//fprintf(fout,"%#5g ",log10(z));
+			fprintf(fout,"%#5g ",sqrt(z));
+			
+		}
+		fprintf(fout,"\n");
+	}	
+	fclose(fout);
+	printf("Dumped at hdump2D.tdm\n");
+}
+
 
 /*! TH1をTF1に変換 */
 void htofunc(TString fname = "hfunc1");

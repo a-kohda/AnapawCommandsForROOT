@@ -93,3 +93,7 @@ gROOT->ProcessLine("SetAPStyle();");
 - Doxygen で自動生成したマニュアル
   - https://a-kohda.github.io/AnapawCommandsForROOT/index.html
 
+## 実装したい機能
+- 文字列の引数を入れる時に" "を省略できるようにしたい
+
+
