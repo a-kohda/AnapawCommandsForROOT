@@ -498,10 +498,17 @@ void zone(int x, int y){
 /// @cond
 void CdNPad(){
 	if(gPad == 0x0) return;
-	if(gPad == gPad->GetCanvas()) return; // 分割されてなければ終了
-	if(gPad == gPad->GetCanvas()->cd(gPad->GetNumber()+1) ){
-		gPad->GetCanvas()->cd(1);	
+//	if(gPad == gPad->GetCanvas()) return; // 分割されてなければ終了
+	if(gPad->GetCanvas()->GetPad(1) == 0x0 ) return; // PadNo1 がなければ終了
+	int currentPadNum = gPad->GetNumber();
+	if(gPad->GetCanvas()->GetPad(currentPadNum+1)==0x0 ){
+		gPad->GetCanvas()->cd(1); // 次のPadが0x0ならPadNo1に移動
+	}else{
+		gPad->GetCanvas()->cd(currentPadNum+1);
 	}
+//	if(gPad == gPad->GetCanvas()->cd(gPad->GetNumber()+1) ){
+//		gPad->GetCanvas()->cd(1);	
+//	}
 }
 /// @endcond
 

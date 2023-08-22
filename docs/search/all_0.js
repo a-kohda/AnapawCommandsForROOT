@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['anapaw_20commands_20for_20root_0',['ANAPAW Commands for ROOT',['../index.html',1,'']]],
-  ['anapawcmd_2ec_1',['anapawcmd.C',['../anapawcmd_8C.html',1,'']]]
+  ['anapawcmd_2ec',['anapawcmd.C',['../anapawcmd_8C.html',1,'']]],
+  ['anapaw_20commands_20for_20root',['ANAPAW Commands for ROOT',['../index.html',1,'']]]
 ];

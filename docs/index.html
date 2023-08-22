@@ -1,10 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=11"/>
-<meta name="generator" content="Doxygen 1.9.7"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.8.11"/>
 <title>ANAPAW Commands for ROOT: ANAPAW Commands for ROOT</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
@@ -12,6 +11,9 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { init_search(); });
+</script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -19,8 +21,8 @@
 <div id="titlearea">
 <table cellspacing="0" cellpadding="0">
  <tbody>
- <tr id="projectrow">
-  <td id="projectalign">
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">ANAPAW Commands for ROOT
    </div>
   </td>
@@ -29,23 +31,32 @@
 </table>
 </div>
 <!-- end header part -->
-<!-- 構築: Doxygen 1.9.7 -->
+<!-- 構築: Doxygen 1.8.11 -->
 <script type="text/javascript">
-/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-var searchBox = new SearchBox("searchBox", "search/",'.html');
-/* @license-end */
+var searchBox = new SearchBox("searchBox", "search",false,'検索');
 </script>
-<script type="text/javascript" src="menudata.js"></script>
-<script type="text/javascript" src="menu.js"></script>
-<script type="text/javascript">
-/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(function() {
-  initMenu('',true,false,'search.php','検索');
-  $(document).ready(function() { init_search(); });
-});
-/* @license-end */
-</script>
-<div id="main-nav"></div>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li class="current"><a href="index.html"><span>総合概要</span></a></li>
+      <li><a href="files.html"><span>ファイル</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="検索" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
 </div><!-- top -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -56,45 +67,37 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<div id="MSearchResults">
-<div class="SRPage">
-<div id="SRIndex">
-<div id="SRResults"></div>
-<div class="SRStatus" id="Loading">読み取り中…</div>
-<div class="SRStatus" id="Searching">検索中…</div>
-<div class="SRStatus" id="NoMatches">一致する文字列を見つけられません</div>
-</div>
-</div>
-</div>
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
 </div>
 
-<div><div class="header">
-  <div class="headertitle"><div class="title">ANAPAW Commands for ROOT </div></div>
+<div class="header">
+  <div class="headertitle">
+<div class="title">ANAPAW Commands for ROOT </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_ReadMe"></a></p><ul>
+<div class="textblock"><ul>
 <li>ROOTのヒストグラムを少ないタイプ数で操作出来るようにします。</li>
 <li>コマンド名(関数名)は基本的にANAPAWに準拠してます。</li>
 <li>ROOTの標準機能とは干渉しないようにしてます。</li>
 <li>まだテスト中です。</li>
 <li>最低限の機能は出来たので公開します。</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md1"></a>
-ダウンロード</h1>
+<h2>ダウンロード</h2>
 <ul>
 <li>ソースコードはGitHubにあります。<ul>
 <li><a href="https://github.com/a-kohda/AnapawCommandsForROOT">https://github.com/a-kohda/AnapawCommandsForROOT</a></li>
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md2"></a>
-内容物</h1>
+<h2>内容物</h2>
 <ul>
 <li>ReadMe.md<ul>
 <li>これ。</li>
 </ul>
 </li>
-<li><a class="el" href="anapawcmd_8C.html" title="ANAPAW Commands for ROOT で使える関数の定義">anapawcmd.C</a><ul>
+<li><a class="el" href="anapawcmd_8C.html" title="ANAPAW Commands for ROOT で使える関数の定義 ">anapawcmd.C</a><ul>
 <li>本体。後述のANAPAWモードを使わない場合は、このファイルしか使わない。</li>
 </ul>
 </li>
@@ -107,19 +110,14 @@ $(function() {
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md3"></a>
-使い方</h1>
-<h2><a class="anchor" id="autotoc_md4"></a>
-設定</h2>
+<h2>使い方</h2>
+<h3>設定</h3>
 <ul>
-<li><a class="el" href="anapawcmd_8C.html" title="ANAPAW Commands for ROOT で使える関数の定義">anapawcmd.C</a> をダウンロードして適当なところに設置してください。</li>
+<li><a class="el" href="anapawcmd_8C.html" title="ANAPAW Commands for ROOT で使える関数の定義 ">anapawcmd.C</a> をダウンロードして適当なところに設置してください。</li>
 <li>ROOT起動後に .L /path/to/anapawcmd.C とすると読み込まれて、コマンドが使えるようになります。</li>
-<li>自動読み込みを設定する場合はrootlogon.Cに以下を追記します。 <div class="fragment"><div class="line">gROOT-&gt;ProcessLine(&quot;.L /path/to/anapawcmd.C&quot;);</div>
-<div class="line">gROOT-&gt;ProcessLine(&quot;SetAPStyle();&quot;);</div>
-</div><!-- fragment --> </li>
+<li>自動読み込みを設定する場合はrootlogon.Cに以下を追記します。 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;gROOT-&gt;ProcessLine(&quot;.L /path/to/anapawcmd.C&quot;);</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;gROOT-&gt;ProcessLine(&quot;SetAPStyle();&quot;);</div></div><!-- fragment --> <h3>利用可能なコマンド一覧</h3>
+</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md5"></a>
-利用可能なコマンド一覧</h2>
 <ul>
 <li>使える関数の一覧はここにあります。 (テスト中)<ul>
 <li><a href="https://a-kohda.github.io/AnapawCommandsForROOT/anapawcmd_8C.html#details">https://a-kohda.github.io/AnapawCommandsForROOT/anapawcmd_8C.html#details</a></li>
@@ -146,8 +144,7 @@ $(function() {
 </ul>
 </li>
 </ul>
-<h2><a class="anchor" id="autotoc_md6"></a>
-不完全だけど使えるコマンド</h2>
+<h3>不完全だけど使えるコマンド</h3>
 <ul>
 <li>sly()<ul>
 <li>2次元ヒストグラムをx方向にスライスしてy軸への射影した1次元ヒストグラムを作成する。<ul>
@@ -180,8 +177,7 @@ $(function() {
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md7"></a>
-ANAPAWモード (apmode, ベータ版)</h1>
+<h2>ANAPAWモード (apmode, ベータ版)</h2>
 <ul>
 <li>ANAPAWみたいに括弧なしでコマンドが使えるようにするためのプログラムです。<ul>
 <li>基本的に文字列処理で "ht 1" -&gt; "ht(1)" のように整形してるだけです。</li>
@@ -191,11 +187,10 @@ ANAPAWモード (apmode, ベータ版)</h1>
 <li>通常のROOTを起動する代わりにこのファイルを実行すると使えます。</li>
 <li>ROOT本来の機能は問題なく使えるはずです。</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md8"></a>
-既知のバグ</h1>
+<h2>既知のバグ</h2>
 <ul>
 <li>ROOT5で動かない。デフォルト引数が二重定義になってるとか言われる。気が向いたら直す。<ul>
-<li><strike>多分直りました。但し、makeする時のROOTのバージョンと、実行するときのROOTのバージョンが同じでないと落ちます。(2023/3/3)</strike><ul>
+<li>~~多分直りました。但し、makeする時のROOTのバージョンと、実行するときのROOTのバージョンが同じでないと落ちます。(2023/3/3)~~<ul>
 <li>ROOT5.34/38 on Ubuntu16.04でテストしたところデフォルト引数が二重定義のエラーが依然として出る。解決策はわかったがまだ修正してない。同じ環境でapmodeをmakeしようとすると、エラーが出る。Makefileの表記順が間違ってるらしい。未修正。(2023/6/8)</li>
 </ul>
 </li>
@@ -207,8 +202,7 @@ ANAPAWモード (apmode, ベータ版)</h1>
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md9"></a>
-更新情報</h1>
+<h2>更新情報</h2>
 <ul>
 <li>2023/7/11<ul>
 <li>apmode.cc内にあるフルパスベタ書きのところを自動設定するように修正した。</li>
@@ -219,24 +213,23 @@ ANAPAWモード (apmode, ベータ版)</h1>
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md10"></a>
-リファレンスマニュアル (テスト中)</h1>
+<h2>リファレンスマニュアル (テスト中)</h2>
 <ul>
 <li>Doxygen で自動生成したマニュアル<ul>
 <li><a href="https://a-kohda.github.io/AnapawCommandsForROOT/index.html">https://a-kohda.github.io/AnapawCommandsForROOT/index.html</a></li>
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md11"></a>
-実装したい機能</h1>
+<h2>実装したい機能</h2>
 <ul>
 <li>文字列の引数を入れる時に" "を省略できるようにしたい </li>
 </ul>
-</div></div><!-- PageDoc -->
-</div><!-- contents -->
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-構築:&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.7
+構築: &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.11
 </small></address>
 </body>
 </html>
