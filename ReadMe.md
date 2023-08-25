@@ -89,6 +89,9 @@ gROOT->ProcessLine("SetAPStyle();");
 - 2023/6/28
   - adlを使えるようにした。Makefileを修正した。(ライブラリの指定順が悪くてUbuntuでコンパイルが通らなかったのを修正。)
 
+- 2023/8/25
+  - apmodeをコンパイルした際にROOTのバージョンごとに実行バイナリを生成する方針に変更した。
+
 ## リファレンスマニュアル (テスト中)
 - Doxygen で自動生成したマニュアル
   - https://a-kohda.github.io/AnapawCommandsForROOT/index.html

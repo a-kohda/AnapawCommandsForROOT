@@ -1,5 +1,9 @@
-apmode : apmode.cc
-	g++ apmode.cc -o apmode `root-config --cflags --libs`
+ROOTVERSION := $(shell root-config --version | tr '/' '_')
+
+apmode$(ROOTVERSION) : apmode.cc
+	g++ apmode.cc -o apmode$(ROOTVERSION) `root-config --cflags --libs` && \
+	ln -sf apmode$(ROOTVERSION) apmode
+
 clean :
 	rm -f apmode
 
@@ -13,3 +17,5 @@ fetch :
 	git fetch && \
 	git merge origin/master
 
+test :
+	@echo aa$(ROOTVERSION)aa
