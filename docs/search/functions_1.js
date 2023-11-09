@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['gh1_0',['gH1',['../anapawcmd_8C.html#a6d02f3258660aba57f835e5267e5c6e4',1,'anapawcmd.C']]]
+  ['fitsgl_0',['fitsgl',['../anapawcmd_8C.html#ace159afae7321ad1795e31e03d71ae41',1,'anapawcmd.C']]]
 ];

@@ -8,8 +8,8 @@
 // バージョン情報
 /// @cond
 void APCRver(){
-	printf("  ANAPAW Commands for ROOT Ver 1.10    \n");
-	printf("  Last Updated 2023. 7.11 by A. Kohda  \n");
+	printf("  ANAPAW Commands for ROOT Ver 1.11    \n");
+	printf("  Last Updated 2023.11. 9 by A. Kohda  \n");
 }
 /// @endcond
 //////////////////////////////////////////////////////
@@ -71,7 +71,13 @@ void CdNPad();
 /**
 * 現在表示中のヒストグラムのポインタを取得する
 */
-TH1* gH1(){ return GetCurrentHist(true); }
+//TH1* gH1(){ return GetCurrentHist(true); }
+TH1* gH1;
+void SetgH1(){
+	gH1 = GetCurrentHist(true);
+}
+
+
 
 ///////// 関数・クラスの実体記述部 //////////
 
@@ -228,6 +234,8 @@ void DrawHist(TH1* h1, TString opt){
 
 	printf(" Draw ID:%3d  %s\n",GetObjID(h1),h1->GetTitle());
   defaultdrawopt = opt;
+
+	gH1 = h1;
 }
 /// @endcond
 
@@ -696,6 +704,85 @@ void figali(float xmin, float xmax,
 	pt2->Draw();
 }
 
+// copy from https://root-forum.cern.ch/t/how-to-fit-a-skew-gaussian/50922
+//double skewedgauss(double * x, double *p) {
+ //   double xi = p[0];
+//    double omega = p[1];
+//    double alpha = p[2];
+//    double arg = (x[0] - xi) / omega;
+//    double smallphi = TMath::Gaus(arg, 0.0, 1.0, true);
+//    double bigphi = 0.5 * (1 + std::erf(alpha * arg/std::sqrt(2)));
+//    return 2./omega * smallphi * bigphi;
+//}
+//void Set_skewedgauss();
+//void Set_skewedgauss(){
+//   auto f1 = new TF1("skewgaus",skewedgauss,0,20,3);
+//   f1->SetParameters(2,1);
+   //f1->SetParNames("constant","coefficient");
+   //f1->Draw();
+//}
+//Set_skewedgauss();
+
+/*! Fit with Skew Gaussian + Linear function */
+void fitsgl(float xmin, float xmax ){
+	TH1* h1 = (TH1*)GetCurrentHist();
+	if(h1 == 0x0) return;
+	float binwidth = h1->GetBinWidth(1); // ビン幅一定でないと正しく計算できないので注意
+	int   startbin = h1->FindBin(xmin);
+	int   endbin   = h1->FindBin(xmax);		
+
+	float x0 = h1->GetBinLowEdge(startbin); // binの開始位置に微調整
+	float x1 = h1->GetBinLowEdge(endbin+1);
+	float y0 = h1->GetBinContent(startbin);
+	float y1 = h1->GetBinContent(endbin);
+
+	// 初期値
+	Double_t pinitial[6];
+	pinitial[0] = (x0+x1)/2; // Shift
+	pinitial[1] = (x1-x0)/4; // Spread
+	pinitial[2] = 0;         // Skewness
+	pinitial[3] = h1->GetBinContent((int)(startbin+endbin)/2);// Amplitude 
+	pinitial[4] = (y1-y0)/(x1-x0); // Slope 
+	pinitial[5] = (y0+y1)/2;   // Offset
+
+	// Fitting
+	TF1 *fitfunc = new TF1("f_fit",Form("[3]*TMath::Gaus((x -[0])/[1],0.0,1.0,true)*0.5*(1+erf([2]*(x-[0])/[1]/sqrt(2)))+[4]*(x-%f)+[5]",(x1+x0)/2),x0 ,x1);
+	fitfunc->SetParNames("p0:Shift","p1:Spread","p2:Skewnes","p3:Amplitu","p4:Slope","p5:Offset");
+	fitfunc->SetParameters(pinitial);
+	h1->Fit("f_fit","","",x0,x1);
+	Double_t *presult =  fitfunc->GetParameters(); // presult[3]みたいな感じでアクセスできる
+	const Double_t *perrs   =  fitfunc->GetParErrors (); 
+	//printf("%f\n",presult[0]);
+
+	// 解析
+//	TF1 *f_bg =  new TF1("f_bg",Form("[0]*(x-%f)+[1]",(x1+x0)/2),x0 ,x1);
+//	f_bg->SetParameters(presult[4],presult[5]);
+
+
+	//float background  = f_bg->Integral(x0,x1)/binwidth; 
+	float background2 = presult[5]*(x1-x0)/binwidth; 
+	float funcinte = fitfunc->Integral(x0,x1)/binwidth; 
+	float histinte      = h1->Integral(startbin,endbin);
+
+	//float backgrounderr = TMath::Sqrt(background);
+	float backgrounderr2= perrs[5]*(x1-x0)/binwidth;
+	float histinteerr = TMath::Sqrt(histinte);
+
+	float calcpeak    = histinte - background2;
+	float calcpeakerr = TMath::Sqrt(histinte + backgrounderr2*backgrounderr2);
+
+	//float backgrounderrtest =0;// f_bg->IntegralError(startval,endval)/binwidth; 
+
+	//printf("background : %f +- %f (%f)\n",background, backgrounderr,backgrounderrtest);
+	printf("Background : %.1f +- %.1f\n",background2, backgrounderr2);
+	printf("FuncInte   : %.1f\n",funcinte);
+	printf("HistInte   : %.1f +- %.1f (%.1f-%.1f)\n",histinte,histinteerr,histinte-histinteerr,histinte+histinteerr);
+	printf("Peak       : %.1f +- %.1f\n",calcpeak,calcpeakerr);
+
+
+	hupdate();
+}
+
 
 void hdump(){
 	FILE *fout = fopen("plots/hdump.txt", "w");
@@ -718,8 +805,8 @@ void hdump2D(){
 	TH1* h1 = (TH2*)GetCurrentHist();
   if(h1 == 0x0) return;
 
-	int minbx = h1->GetXaxis()->FindBin(2.42) -1;
-	int maxbx = h1->GetXaxis()->FindBin(2.68) +1;
+	int minbx = h1->GetXaxis()->FindBin(2.40) -1;
+	int maxbx = h1->GetXaxis()->FindBin(2.70) +1;
 	int minby = h1->GetYaxis()->FindBin(18.5) -1;
 	int maxby = h1->GetYaxis()->FindBin(24.5) +1;
 
@@ -746,7 +833,8 @@ void hdump2D(){
 			//fprintf(fout,"%#5g ",z);
 			if(z<1)z=1;
 			//fprintf(fout,"%#5g ",log10(z));
-			fprintf(fout,"%#5g ",sqrt(z));
+			//fprintf(fout,"%#5g ",sqrt(z));
+			fprintf(fout,"%#5g ",z);
 			
 		}
 		fprintf(fout,"\n");

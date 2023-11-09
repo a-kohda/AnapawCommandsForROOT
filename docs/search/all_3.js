@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['hlist_0',['hlist',['../anapawcmd_8C.html#aa1b0fe678837d1eec05a930d39615222',1,'anapawcmd.C']]],
-  ['ht_1',['ht',['../anapawcmd_8C.html#ab1198d8d8f0f0631783cdf40b8f7e724',1,'anapawcmd.C']]],
-  ['htofunc_2',['htofunc',['../anapawcmd_8C.html#a21dc85732e146436cfdc098e7c4f894f',1,'anapawcmd.C']]]
+  ['gh1_0',['gH1',['../anapawcmd_8C.html#a56b24774d61caf62f75f90ced15a70cb',1,'anapawcmd.C']]]
 ];
