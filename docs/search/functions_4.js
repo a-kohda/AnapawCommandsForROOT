@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mail_0',['mail',['../anapawcmd_8C.html#a908121f4e4a2934a49d7ec30fe7636c8',1,'anapawcmd.C']]]
+  ['info_0',['info',['../anapawcmd_8C.html#ac1b66fe77173de9e5e8542b2823d6071',1,'anapawcmd.C']]]
 ];

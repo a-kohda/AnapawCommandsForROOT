@@ -920,7 +920,7 @@ void htofunc(TString fname){
 	printf("\t> TF1* tf%s = new TF1(\"tf%s\",\"f%s(x,[0])\",0,4000);\n",fname.Data(),fname.Data(),fname.Data());
 }
 
-// Tree->Draw()で作ったhistを、ls で表示されるリストに追加する
+/*! Tree->Draw()で作ったhistを、ls で表示されるリストに追加する */
 void adl(){
   TH1* h1 = (TH1*)GetCurrentHist();
   TH1D* h1_copied = (TH1D*)h1->Clone();
@@ -930,7 +930,7 @@ void adl(){
 	hupdate();
 }
 
-// histogramの情報を出力
+/*! histogramの情報を出力 */
 void info(){
 	TH1* h1 = (TH1*)GetCurrentHist();
 	printf("Title  : %s\n",h1->GetTitle());
@@ -941,7 +941,7 @@ void info(){
 
 }
 
-// 現在開かれているファイル一覧
+/*! 現在開かれているファイル一覧 */
 void fls(){
 	int num = gROOT->GetListOfFiles()->Capacity();
 	for(int i=0; i<num; i++){
