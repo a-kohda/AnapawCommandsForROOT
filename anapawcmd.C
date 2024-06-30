@@ -2,17 +2,9 @@
 * @file
 * @brief ANAPAW Commands for ROOT で使える関数の定義
 * @author A. Kohda
-* @date 2023. 7. 11
+* @date 2023. 11. 9
+* @version 1.11
 */
-
-// バージョン情報
-/// @cond
-void APCRver(){
-	printf("  ANAPAW Commands for ROOT Ver 1.11    \n");
-	printf("  Last Updated 2023.11. 9 by A. Kohda  \n");
-}
-/// @endcond
-//////////////////////////////////////////////////////
 
 // グローバル変数の定義
 TString defaultdrawopt = "colz"; 
@@ -785,10 +777,67 @@ void fitsgl(float xmin, float xmax ){
 
 
 void hdump(){
-	FILE *fout = fopen("plots/hdump.txt", "w");
-	
 	TH1* h1 = (TH1*)GetCurrentHist();
   if(h1 == 0x0) return;
+
+
+
+	char *home_dir;
+	home_dir = getenv("HOME");
+	//printf("test:%s\n",mailto);
+
+
+	// 保存場所
+	vector<TString> sdircand; // 保存ディレクトリの候補
+	sdircand.push_back("./png");    // 候補順に書く
+	sdircand.push_back("../png"); 
+	sdircand.push_back("./plots"); 
+	sdircand.push_back("../plots");
+	sdircand.push_back(home_dir);
+	//sdircand.push_back("./");
+
+	bool find_flag = false;
+	int sdir_num = -1;
+	for(int i=0;i<sdircand.size();i++){
+		char command[128];
+		sprintf(command, "test -d %s", sdircand[i].Data()); // OS依存性あり
+		//printf("%s\n",command);
+		int returnval = system(command);
+		//printf("%d\n",returnval);
+		if(returnval == 0){
+			sdir_num = i;
+			break;
+		}
+	}
+	if(sdir_num < 0) {
+		printf(" Not saved because candidate directories not found.\n");
+		return;
+	}
+
+
+
+	TString fname = Form("%s/dump.dat",
+		sdircand[sdir_num].Data());
+	//printf("%s\n",fname.Data());
+	
+	FILE *fout = fopen(fname.Data(), "w");
+
+	if( h1->InheritsFrom("TH2") ){ // TH2の場合
+		TH2* h2 = (TH2*)h1;
+		int fNbinsX = h2->GetNbinsX();
+		int fNbinsY = h2->GetNbinsY();
+		for(int biny=0; biny<fNbinsY+2; biny++){
+		for(int binx=0; binx<fNbinsX+2; binx++){
+			float x = h2->GetXaxis()->GetBinCenter(binx);
+			float y = h2->GetYaxis()->GetBinCenter(biny);
+			float z = h2->GetBinContent(binx,biny);
+			fprintf(fout,"%f %f %f\n",x,y,z);
+		}}
+		fclose(fout);
+		printf("Dumped at plots/hdump.txt\n");
+		return;
+	}
+
 	int nbin = h1->GetNbinsX();
 	for(int n=0;n<nbin+2;n++){
 		float x = h1->GetBinCenter(n);
@@ -796,7 +845,7 @@ void hdump(){
 		fprintf(fout,"%f %f\n",x,y);
 	}	
 	fclose(fout);
-	printf("Dumped at plots/hdump.txt\n");
+	printf("Dumped at %s/dump.dat\n",sdircand[sdir_num].Data());
 }
 
 void hdump2D(){
@@ -881,6 +930,24 @@ void adl(){
 	hupdate();
 }
 
+// histogramの情報を出力
+void info(){
+	TH1* h1 = (TH1*)GetCurrentHist();
+	printf("Title  : %s\n",h1->GetTitle());
+	printf("Name   : %s\n",h1->GetName());
+	printf("Entries: %lf\n",h1->GetEntries());
+	printf("Mean   : %lf\n",h1->GetMean());
+	printf("Std Dev: %lf\n",h1->GetStdDev());
+
+}
+
+// 現在開かれているファイル一覧
+void fls(){
+	int num = gROOT->GetListOfFiles()->Capacity();
+	for(int i=0; i<num; i++){
+		printf("    %2d  %s\n",i,gROOT->GetListOfFiles()->At(i)->GetName() );
+	}
+}
 
 /// @cond
 void switchAPmode(){
