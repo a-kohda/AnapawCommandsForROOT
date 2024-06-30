@@ -949,6 +949,29 @@ void fls(){
 	}
 }
 
+/*! histgram同士の割り算 */
+void divide(int hid1, int hid2){
+	TList* li = GetHistList();
+	TH1* h1 = (TH1*)li->At(hid1);
+	if(h1 == 0x0 || ! h1->InheritsFrom("TH1") ){
+		printf(" %d do not exist or not histgram\n", hid1);
+		return;
+	}
+	TH1* h2 = (TH1*)li->At(hid2);
+	if(h2 == 0x0 || ! h1->InheritsFrom("TH1") ){
+		printf(" %d do not exist or not histgram\n", hid2);
+		return;
+	}
+	TH1* h1_copied = (TH1*)h1->Clone();
+	h1_copied->Divide(h2);
+
+	h1_copied->SetName(Form("h%08x\n",rand()));
+	h1_copied->SetTitle(Form("h%d / h%d",hid1, hid2) );
+	gDirectory->GetListOfKeys()->AddLast(h1_copied);
+	DrawHist(h1_copied);
+	hupdate();
+}
+
 /// @cond
 void switchAPmode(){
 	TString apmodepath = "/home/kohda/.rootmacros/AnapawCommandsForROOT/apmode";
