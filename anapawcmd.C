@@ -775,6 +775,43 @@ void fitsgl(float xmin, float xmax ){
 	hupdate();
 }
 
+/*! 両側エラー関数でfit */
+void fitbierf(double xmin, double xmax){
+	TH1* h1 = (TH1*)GetCurrentHist();
+	if(h1 == 0x0) return;
+
+	int fNcells = h1->GetNcells();
+	for(int i=0;i<fNcells;i++){
+		double n1 = h1->GetBinContent(i);
+		if(n1>0) continue;
+		double e1 = h1->GetBinError(i);
+		if(e1>1.e-05) continue;
+
+		h1->Fill(h1->GetBinCenter(i), 1/sqrt(2));
+		h1->Fill(h1->GetBinCenter(i),-1/sqrt(2));
+	}
+
+
+	// 初期値
+	double scale=1.0;
+	double lx = (3*xmin + xmax)/4;
+	double rx = (xmin + 3*xmax)/4;
+	double lsigma = (xmax - xmin)/50;
+	double rsigma = (xmax - xmin)/50;
+	TF1 *fitfunc = new TF1("f_fit","[0]*0.5*(1+TMath::Erf((x-[1])/(TMath::Sqrt(2)*[2])))*0.5*(1-TMath::Erf((x-[3])/(TMath::Sqrt(2)*[4])))");
+	fitfunc->SetParNames("p0:Scale","p1:lx","p2:l#sigma","p3:rx","p4:r#sigma");
+	fitfunc->SetParameter(0,scale);
+	fitfunc->SetParameter(1,lx);
+	fitfunc->SetParameter(2,lsigma);
+	fitfunc->SetParameter(3,rx);
+	fitfunc->SetParameter(4,rsigma);
+	fitfunc->SetParLimits(1,xmin,(xmax + xmin)/2);
+	fitfunc->SetParLimits(3,(xmax + xmin)/2,xmax);
+	fitfunc->SetParLimits(2,0,(xmax - xmin)/20);
+	fitfunc->SetParLimits(4,0,(xmax - xmin)/20);
+	h1->Fit("f_fit","","",xmin,xmax);
+
+}
 
 void hdump(){
 	TH1* h1 = (TH1*)GetCurrentHist();
@@ -950,7 +987,7 @@ void fls(){
 }
 
 /*! histgram同士の割り算 */
-void divide(int hid1, int hid2){
+void divide(int hid1, int hid2, int err_type=-1){
 	TList* li = GetHistList();
 	TH1* h1 = (TH1*)li->At(hid1);
 	if(h1 == 0x0 || ! h1->InheritsFrom("TH1") ){
@@ -963,9 +1000,56 @@ void divide(int hid1, int hid2){
 		return;
 	}
 	TH1* h1_copied = (TH1*)h1->Clone();
-	h1_copied->Divide(h2);
+	TH1* h2_copied = (TH1*)h2->Clone();
 
-	h1_copied->SetName(Form("h%08x\n",rand()));
+	if(err_type==-1){
+		printf("Select error type:\n");
+		printf("  0 : No error.\n");
+		printf("  1 : Error Propagation from input histograms.\n");
+		printf("  2 : Binomial distribution.\n");
+		printf("  3 : Binomial distribution with Laplace correction.\n");
+		printf("> ");
+		scanf("%d",&err_type);
+	}
+	if(err_type<0 || 3<err_type){
+		printf("Error type is wrong.\n");
+		return;
+	}
+
+	if(err_type==1){
+		h1_copied->Sumw2();
+		h2_copied->Sumw2();
+	}
+
+	if(err_type==3){ // ラプラス補正を行う
+		int fNcells = h1_copied->GetNcells();
+		for(int i=0;i<fNcells;i++){
+			double n1 = h1_copied->GetBinContent(i);
+			if(n1<1) continue;
+			h1_copied->Fill(h1_copied->GetBinCenter(i));
+			h2_copied->Fill(h2_copied->GetBinCenter(i));
+			h2_copied->Fill(h2_copied->GetBinCenter(i));
+		}
+	}
+
+	h1_copied->Divide(h2_copied);
+	if(err_type==2 || err_type==3){ // 二項分布として誤差を付ける
+		int fNcells = h2->GetNcells();
+		Double_t error[fNcells];
+		for(int i=0;i<fNcells;i++){
+			double n = h2->GetBinContent(i);
+			double p = h1_copied->GetBinContent(i);
+			double v = n * p * (1 - p); // https://bellcurve.jp/statistics/course/6982.html
+			if(n>0) error[i] = sqrt(v/(n*n));
+			if(n<1) error[i] = 0;
+		}
+		h1_copied->SetError(error);
+	}
+
+
+	h2_copied->Delete();
+
+	h1_copied->SetName(Form("h%08x",rand()));
 	h1_copied->SetTitle(Form("h%d / h%d",hid1, hid2) );
 	gDirectory->GetListOfKeys()->AddLast(h1_copied);
 	DrawHist(h1_copied);

@@ -166,6 +166,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>figali</b> (float xmi
 <tr class="separator:a5448485b9a452bb8609fbad6be01a05c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace159afae7321ad1795e31e03d71ae41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="anapawcmd_8C.html#ace159afae7321ad1795e31e03d71ae41">fitsgl</a> (float xmin, float xmax)</td></tr>
 <tr class="separator:ace159afae7321ad1795e31e03d71ae41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d82af60e1b8dacb61ffd20f6f293198"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="anapawcmd_8C.html#a3d82af60e1b8dacb61ffd20f6f293198">fitbierf</a> (double xmin, double xmax)</td></tr>
+<tr class="separator:a3d82af60e1b8dacb61ffd20f6f293198"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ec5cdd21f4f7eae34be727278eca790"><td class="memItemLeft" align="right" valign="top"><a id="a8ec5cdd21f4f7eae34be727278eca790" name="a8ec5cdd21f4f7eae34be727278eca790"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>hdump</b> ()</td></tr>
 <tr class="separator:a8ec5cdd21f4f7eae34be727278eca790"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -180,8 +182,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>hdump2D</b> ()</td></
 <tr class="separator:ac1b66fe77173de9e5e8542b2823d6071"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01726eb22dbc03d49fe103178cc50bef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="anapawcmd_8C.html#a01726eb22dbc03d49fe103178cc50bef">fls</a> ()</td></tr>
 <tr class="separator:a01726eb22dbc03d49fe103178cc50bef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1800d481398ef4f29df948d604306809"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="anapawcmd_8C.html#a1800d481398ef4f29df948d604306809">divide</a> (int hid1, int hid2)</td></tr>
-<tr class="separator:a1800d481398ef4f29df948d604306809"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab79f19d1fa477803f8d9b10eac4909c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="anapawcmd_8C.html#ab79f19d1fa477803f8d9b10eac4909c4">divide</a> (int hid1, int hid2, int err_type=-1)</td></tr>
+<tr class="separator:ab79f19d1fa477803f8d9b10eac4909c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 変数</h2></td></tr>
@@ -252,8 +254,8 @@ void(*&#160;</td><td class="memItemRight" valign="bottom"><b>cdn</b> )() = CdNPa
 
 </div>
 </div>
-<a id="a1800d481398ef4f29df948d604306809" name="a1800d481398ef4f29df948d604306809"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1800d481398ef4f29df948d604306809">&#9670;&#160;</a></span>divide()</h2>
+<a id="ab79f19d1fa477803f8d9b10eac4909c4" name="ab79f19d1fa477803f8d9b10eac4909c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab79f19d1fa477803f8d9b10eac4909c4">&#9670;&#160;</a></span>divide()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -268,7 +270,13 @@ void(*&#160;</td><td class="memItemRight" valign="bottom"><b>cdn</b> )() = CdNPa
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>hid2</em>&#160;</td>
+          <td class="paramname"><em>hid2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>err_type</em> = <code>-1</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -278,6 +286,35 @@ void(*&#160;</td><td class="memItemRight" valign="bottom"><b>cdn</b> )() = CdNPa
       </table>
 </div><div class="memdoc">
 <p>histgram同士の割り算 </p>
+
+</div>
+</div>
+<a id="a3d82af60e1b8dacb61ffd20f6f293198" name="a3d82af60e1b8dacb61ffd20f6f293198"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d82af60e1b8dacb61ffd20f6f293198">&#9670;&#160;</a></span>fitbierf()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void fitbierf </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>xmin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>xmax</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>両側エラー関数でfit </p>
 
 </div>
 </div>
