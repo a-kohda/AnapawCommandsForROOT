@@ -2,13 +2,19 @@
 * @file
 * @brief ANAPAW Commands for ROOT で使える関数の定義
 * @author A. Kohda
-* @date 2023. 11. 9
-* @version 1.11
+* @date 2024. 7. 8
+* @version 1.12
 */
 
 // グローバル変数の定義
 TString defaultdrawopt = "colz"; 
 vector<double> gDoubleVec;
+TF1 *gFitFunction = 0x0;
+
+// 今後使う予定のグローバル変数
+TList* gObjectList = 0x0;
+TF1*   gF          = 0x0;
+TH1*   gH          = 0x0;
 
 // ANAPAW準拠のユーザー用関数
 // 基本操作用の関数
@@ -106,6 +112,25 @@ TList* GetHistList(){
 	}
 	return li;
 }
+
+
+// GetHistListの改良版
+TList* I_GetObjectList(){
+	if( gObjectList == 0x0 ) gObjectList = new TList();
+	gObjectList->Clear();
+
+	if(gDirectory->GetListOfKeys() != 0x0){
+		for(int i=0; i< gDirectory->GetListOfKeys()->GetEntries(); i++){
+			gObjectList->Add(gROOT->FindObject(gDirectory->GetListOfKeys()->At(i)->GetName()));
+		}
+	}
+
+	for(int i=0; i< gROOT->GetList()->GetEntries(); i++){
+		gObjectList->Add(gROOT->GetList()->At(i));
+	}
+	return gObjectList;
+}
+
 /// @endcond
 
 void hlist(){
@@ -123,6 +148,33 @@ void hlist(){
 		else if(obj->InheritsFrom("TH2"))   { kind = '2'; }
 		else if(obj->InheritsFrom("TH1"))   { kind = '1'; }
 		else if(obj->InheritsFrom("TTree")) { kind = 'T'; }
+		if ( n == cidx ) { arrow = "->"; }
+		else { arrow = "  "; }
+		if (obj->InheritsFrom("TH1")){
+			printf(" %s %3d    (%c)    %s\n", arrow.Data(), n, kind, obj->GetTitle());
+		}else{
+			printf(" %s %3d    (%c)    %s; %s\n", arrow.Data(), n, kind, obj->GetName(),obj->GetTitle());
+		}
+	}
+}
+
+// hlistの改良版
+void ols(){
+	printf("\n  ===> Histogram and Object List\n\n");
+	printf("    HID    Kind    Title\n\n");
+
+	TList* li = I_GetObjectList();
+	int cidx = GetObjID(GetCurrentHist(true));
+	TString arrow;
+
+	for(int n=0;n < li->GetEntries();n++){
+		char kind='S';
+		TObject* obj = li->At(n);
+		if     (obj->InheritsFrom("TH3"))   { kind = '3'; }
+		else if(obj->InheritsFrom("TH2"))   { kind = '2'; }
+		else if(obj->InheritsFrom("TH1"))   { kind = '1'; }
+		else if(obj->InheritsFrom("TTree")) { kind = 'T'; }
+		else if(obj->InheritsFrom("TF1"))   { kind = 'F'; }
 		if ( n == cidx ) { arrow = "->"; }
 		else { arrow = "  "; }
 		if (obj->InheritsFrom("TH1")){
@@ -152,6 +204,53 @@ void ht(TString opt){
 	TH1* h1 = (TH1*)GetCurrentHist();
 	if(h1 == 0x0) return;
 	DrawHist(h1, opt);
+}
+
+
+void I_DrawFunction(TF1* f1){
+
+	f1->UseCurrentStyle(); // style を強制適用
+	if(gPad == 0x0) TCanvas *c1 = new TCanvas(); // キャンバスがない場合、生成
+	f1->Draw();
+
+	// 情報表示
+	TPave* box =new TPave();
+	box->SetX1NDC(0.4);
+	box->SetX2NDC(0.9);
+	box->SetY1NDC(0.6);
+	box->SetY2NDC(0.9);
+	box->SetBorderSize(1);
+	box->SetFillStyle(0);
+	box->Draw();
+
+	TText *tfilename = new TText(0.01,0.01,gDirectory->GetName());
+	tfilename->SetNDC(1);
+	tfilename->SetTextAlign(11);
+	tfilename->Draw();
+	TText *t_hid = new TText(0.90,0.05,Form("Object ID = %d",GetObjID(f1)));
+	t_hid->SetNDC(1);
+	t_hid->SetTextAlign(32);
+	t_hid->Draw();
+
+	TDatime *currenttime = new TDatime();
+	TText *tdatetime = new TText(0.99,0.99,currenttime->AsSQLString() );
+	tdatetime->SetNDC(1);
+	tdatetime->SetTextAlign(33);
+	tdatetime->Draw();
+
+	printf(" Draw ID:%3d  %s\n",GetObjID(f1),f1->GetTitle());
+
+}
+
+/*! Functionを表示する */
+void fc(int oid){
+	TList* li = I_GetObjectList();
+	TF1* f1 = (TF1*)li->At(oid);
+	if(f1 == 0x0 || ! f1->InheritsFrom("TF1") ){
+		printf(" %d do not exist or not function\n", oid);
+		return;
+	}
+	I_DrawFunction(f1);	
 }
 
 /// @cond
@@ -798,7 +897,8 @@ void fitbierf(double xmin, double xmax){
 	double rx = (xmin + 3*xmax)/4;
 	double lsigma = (xmax - xmin)/50;
 	double rsigma = (xmax - xmin)/50;
-	TF1 *fitfunc = new TF1("f_fit","[0]*0.5*(1+TMath::Erf((x-[1])/(TMath::Sqrt(2)*[2])))*0.5*(1-TMath::Erf((x-[3])/(TMath::Sqrt(2)*[4])))");
+	TF1 *fitfunc = new TF1("f_fit","[0]*0.5*(1+TMath::Erf((x-[1])/(TMath::Sqrt(2)*[2])))*0.5*(1-TMath::Erf((x-[3])/(TMath::Sqrt(2)*[4])))",xmin,xmax);
+	fitfunc->SetTitle("fitbierf");
 	fitfunc->SetParNames("p0:Scale","p1:lx","p2:l#sigma","p3:rx","p4:r#sigma");
 	fitfunc->SetParameter(0,scale);
 	fitfunc->SetParameter(1,lx);
@@ -811,7 +911,18 @@ void fitbierf(double xmin, double xmax){
 	fitfunc->SetParLimits(4,0,(xmax - xmin)/20);
 	h1->Fit("f_fit","","",xmin,xmax);
 
+	hupdate();
+	gFitFunction = fitfunc;
+
 }
+
+void addfunc(){
+	if(gFitFunction == 0x0) return;
+	TF1* f1 = (TF1*)gFitFunction->Clone();
+	f1->SetName(Form("f_%08x",rand()));
+	gDirectory->GetListOfKeys()->AddLast(f1);
+}
+
 
 void hdump(){
 	TH1* h1 = (TH1*)GetCurrentHist();
@@ -879,11 +990,78 @@ void hdump(){
 	for(int n=0;n<nbin+2;n++){
 		float x = h1->GetBinCenter(n);
 		float y = h1->GetBinContent(n);
-		fprintf(fout,"%f %f\n",x,y);
+		float xerr = h1->GetBinWidth(n) /2. ;
+		float yerr = h1->GetBinError(n);
+		// 書き込むかの判定用
+		float y_p = h1->GetBinContent(n-1);
+		float yerr_p = h1->GetBinError(n-1);
+		float y_n = h1->GetBinContent(n+1);
+		float yerr_n = h1->GetBinError(n+1);
+		if( y*y + yerr*yerr + y_p*y_p + yerr_p*yerr_p + y_n*y_n + yerr_n*yerr_n <1e-6) continue;
+		fprintf(fout,"%f %f %f %f\n",x,y,xerr,yerr);
 	}	
 	fclose(fout);
 	printf("Dumped at %s/dump.dat\n",sdircand[sdir_num].Data());
 }
+
+/*! TF1をファイルにDumpする */
+void fdump(int points=100){
+	char *home_dir;
+	home_dir = getenv("HOME");
+	// 保存場所
+	vector<TString> sdircand; // 保存ディレクトリの候補
+	sdircand.push_back("./png");    // 候補順に書く
+	sdircand.push_back("../png"); 
+	sdircand.push_back("./plots"); 
+	sdircand.push_back("../plots");
+	sdircand.push_back(home_dir);
+	//sdircand.push_back("./");
+
+	bool find_flag = false;
+	int sdir_num = -1;
+	for(int i=0;i<sdircand.size();i++){
+		char command[128];
+		sprintf(command, "test -d %s", sdircand[i].Data()); // OS依存性あり
+		//printf("%s\n",command);
+		int returnval = system(command);
+		//printf("%d\n",returnval);
+		if(returnval == 0){
+			sdir_num = i;
+			break;
+		}
+	}
+	if(sdir_num < 0) {
+		printf(" Not saved because candidate directories not found.\n");
+		return;
+	}
+
+	TString fname = Form("%s/dump.dat",
+		sdircand[sdir_num].Data());
+	//printf("%s\n",fname.Data());
+	FILE *fout = fopen(fname.Data(), "w");
+
+	TF1* f1 = gFitFunction;
+	float xmin = f1->GetXmin();
+	float xmax = f1->GetXmax();
+	float dx = (xmax - xmin)/points;
+
+	for(int n=0;n<points+1;n++){
+		float x = xmin + n * dx;
+		float y = f1->Eval(x);
+		fprintf(fout,"%f %f\n",x,y);
+	}
+
+	fclose(fout);
+	printf("Dumped at %s/dump.dat\n",sdircand[sdir_num].Data());
+
+}
+
+
+/*! fit出来る関数の候補を提示する(未完成) */
+void fit(TString funcname = "help", double xmin=0, double xmax=-1){
+	TString funcnamelist[] = {"gaus","gauslin","sgl","bierf"};
+}
+
 
 void hdump2D(){
 	FILE *fout = fopen("hdump2D.tdm", "w");
@@ -1056,6 +1234,80 @@ void divide(int hid1, int hid2, int err_type=-1){
 	hupdate();
 }
 
+
+/*! histgram同士(またはTF1と)の掛け算 */
+/*! 今の所、TH1 * TF1 のみ */
+void multiply(int hid1, int oid2){
+	TList* li = GetHistList();
+	TH1* h1 = (TH1*)li->At(hid1);
+	if(h1 == 0x0 || ! h1->InheritsFrom("TH1") ){
+		printf(" %d do not exist or not histgram\n", hid1);
+		return;
+	}
+	TObject* o2 = (TObject*)li->At(oid2);
+	//if(h2 == 0x0 || ! h1->InheritsFrom("TH1") ){
+	//	printf(" %d do not exist or not histgram\n", hid2);
+	//	return;
+	//}
+	TH1* h1_copied = (TH1*)h1->Clone();
+	TObject* o2_copied = (TObject*)o2->Clone();
+
+	h1_copied->Multiply((TF1*)o2_copied);
+	h1_copied->SetName(Form("h%08x",rand()));
+	h1_copied->SetTitle(Form("h%d * f%d",hid1, oid2) );
+	gDirectory->GetListOfKeys()->AddLast(h1_copied);
+	DrawHist(h1_copied);
+	hupdate();
+
+}
+
+// ヒストグラム同士 (ヒストグラムと関数)の演算全般
+void ArithmeticOperations(int type, int oid1, int oid2){
+	if(type!=1) return;
+	// type=0 足し算
+	// type=1 引き算
+	// type=2 掛け算
+	// type=3 割り算
+	// type=4 定数倍
+
+	TList* li = GetHistList();
+	TObject* o1 = (TObject*)li->At(oid1);
+	if(o1 == 0x0 || ! o1->InheritsFrom("TH1") ){
+		printf(" %d do not exist or not histgram\n", oid1);
+		return;
+	}
+	TObject* o2 = (TObject*)li->At(oid2);
+	//if(h2 == 0x0 || ! h1->InheritsFrom("TH1") ){
+	//	printf(" %d do not exist or not histgram\n", hid2);
+	//	return;
+	//}
+	TH1* h1_copied = (TH1*)o1->Clone();
+	TObject* o2_copied = (TObject*)o2->Clone();
+
+	if(type==1) h1_copied->Add( (TH1*)o2_copied, -1. );
+
+
+	h1_copied->SetName(Form("h%08x",rand()));
+
+	if(type==1) h1_copied->SetTitle(Form("h%d - h%d",oid1, oid2) );
+
+	gDirectory->GetListOfKeys()->AddLast(h1_copied);
+	DrawHist(h1_copied);
+	hupdate();
+
+}
+
+/*! histgram同士の引き算 */
+void subtract(int oid1, int oid2){
+	ArithmeticOperations(1, oid1, oid2);
+}
+
+
+// 内部用関数には I_ を付ける
+TObject* I_GetPointerFromOID(int oid){
+	return 0;
+}
+
 /// @cond
 void switchAPmode(){
 	TString apmodepath = "/home/kohda/.rootmacros/AnapawCommandsForROOT/apmode";
@@ -1112,87 +1364,6 @@ void SetAPStyle(){
 	gStyle->SetTitleY(0.95);
 }
 
-// 以下は自分用のstyle設定
 
-void ReDrawSlideStyle(){
-	gPad->GetCanvas()->SetWindowSize (800 + 2, 600+ 24);
-	int linewidth =3;
-	gPad->SetFrameLineWidth(linewidth);
-	gStyle->SetLineWidth(linewidth);
-	gPad->SetMargin(0.11,0.04,0.08,0.06);
-	TH1* h1 = (TH1*)GetCurrentHist();	
-	h1->Draw();
-	h1->SetTitle(";;;");
-	h1->SetStats(0);
-	int fontid=63;
-	float fsize = 28; // フォントサイズ(px)
-	h1->SetLabelFont(fontid,"XYZ");
-	h1->SetLabelFont(fontid,"");
-	h1->SetLabelSize(fsize,"XYZ");
-	h1->SetLabelSize(fsize,"");
-	h1->SetLabelOffset (0.03,"XY");
-	gPad->SetGrid(0,0);
-	gPad->SetTicks();
-	h1->GetXaxis()->SetNdivisions(7);
-	h1->GetYaxis()->SetNdivisions(7);
-	h1->SetLineWidth(linewidth);
-	h1->SetFillStyle(0);
-	h1->SetLineColor(0);
-	h1->SetLineColor(1);
-	gPad->Modified();
-	gPad->Update();
-	gPad->Modified();
-}
-
-void ReDrawPaperStyle2Djpg(){
-	int linewidth =0;
-	gPad->SetFrameLineWidth(linewidth);
-	gStyle->SetLineWidth(linewidth);
-	gPad->SetMargin(0.16,0.08,0.16,0.08); // lrbt
-	//gStyle->SetPalette(kGreyScale);
-	//TColor::InvertPalette();
-  const Int_t NRGBs = 2;   
-  const Int_t NCont = 128;  
-  Double_t stops[NRGBs] = { 0.00, 1.00 }; 
-  Double_t Red[NRGBs]   = { 1.00, 0.10 }; 
-  Double_t Green[NRGBs] = { 1.00, 0.10 }; 
-  Double_t Blue[NRGBs]  = { 1.00, 0.10 }; 
-  TColor::CreateGradientColorTable(NRGBs, stops, Red, Green, Blue, NCont);
-  gStyle->SetNumberContours(NCont);
-
-	TH1* h1 = (TH1*)GetCurrentHist();	
-	h1->Draw("col");
-	h1->SetTitle(";;;");
-	h1->SetStats(0);
-	h1->SetLabelOffset (100,"XY");
-	gPad->SetGrid(0,0);
-	h1->SetLineWidth(linewidth);
-	h1->SetFillStyle(0);
-	gPad->Modified();
-	gPad->Update();
-	gPad->Modified();
-}
-
-void ReDrawPaperStyle2Dframe(){
-	TH1* h1 = (TH1*)GetCurrentHist();	
-	float minX = h1->GetXaxis()->GetXmin();
-	float maxX = h1->GetXaxis()->GetXmax();
-	float minY = h1->GetYaxis()->GetXmin();
-	float maxY = h1->GetYaxis()->GetXmax();
-
-	gPad->Clear();
-	gStyle->SetTitleStyle(0);
-	gPad->SetFillStyle(0);
-	TH1F *frame = gPad->DrawFrame( minX, minY, maxX, maxY);
-	frame->SetFillStyle(0);
-	gStyle->SetLineWidth(1);
-	gPad->SetGrid(0,0);
-	gPad->SetTicks();
-	frame->GetXaxis()->SetNdivisions(7);
-	frame->GetYaxis()->SetNdivisions(7);
-	gPad->GetFrame()->SetFillStyle(0);
-
-
-}
 /// @endcond
 
