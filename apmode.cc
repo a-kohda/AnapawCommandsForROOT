@@ -111,7 +111,19 @@ Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
 		IsAPcmd += tsblocks[0].EqualTo("fitsgl");
 		IsAPcmd += tsblocks[0].EqualTo("divide");
 		IsAPcmd += tsblocks[0].EqualTo("fls");
+		IsAPcmd += tsblocks[0].EqualTo("fit");
 	}
+
+// 2番目以降の文字列ブロックが初めの文字がクオーテーションでなくて且つ、
+// 数値以外の文字を含む場合に前後にクオーテーションを付ける
+	if(IsAPcmd){
+		for(int i=1;i<tsblocks.size();i++){
+			if(  ! tsblocks[i].IsFloat() ){
+				tsblocks[i] = Form("\"%s\"",tsblocks[i].Data());
+			}
+		}
+	}
+
 
 	TString formedAPcmd;
 	if(tsblocks.size()>=1 && IsAPcmd ){

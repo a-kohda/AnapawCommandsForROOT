@@ -101,6 +101,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SetgH1</b> ()</td></t
 <tr class="memitem:ad8a7150289bf81e2ecc60509ee1a1f32"><td class="memItemLeft" align="right" valign="top"><a id="ad8a7150289bf81e2ecc60509ee1a1f32" name="ad8a7150289bf81e2ecc60509ee1a1f32"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>ols</b> ()</td></tr>
 <tr class="separator:ad8a7150289bf81e2ecc60509ee1a1f32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a4a3cef40cd8acefe8d3913380a814a"><td class="memItemLeft" align="right" valign="top"><a id="a0a4a3cef40cd8acefe8d3913380a814a" name="a0a4a3cef40cd8acefe8d3913380a814a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>ls</b> ()</td></tr>
+<tr class="separator:a0a4a3cef40cd8acefe8d3913380a814a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1198d8d8f0f0631783cdf40b8f7e724"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="anapawcmd_8C.html#ab1198d8d8f0f0631783cdf40b8f7e724">ht</a> (int n, TString opt=defaultdrawopt)</td></tr>
 <tr class="separator:ab1198d8d8f0f0631783cdf40b8f7e724"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae5bac2ca5a97a9115f07d0fa8e6991d"><td class="memItemLeft" align="right" valign="top"><a id="aae5bac2ca5a97a9115f07d0fa8e6991d" name="aae5bac2ca5a97a9115f07d0fa8e6991d"></a>
@@ -230,8 +233,6 @@ TF1 *&#160;</td><td class="memItemRight" valign="bottom"><b>gF</b> = 0x0</td></t
 <tr class="memitem:a4252793bcf64d53cbfa3798a25080acd"><td class="memItemLeft" align="right" valign="top"><a id="a4252793bcf64d53cbfa3798a25080acd" name="a4252793bcf64d53cbfa3798a25080acd"></a>
 TH1 *&#160;</td><td class="memItemRight" valign="bottom"><b>gH</b> = 0x0</td></tr>
 <tr class="separator:a4252793bcf64d53cbfa3798a25080acd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae46e09a426696439c75f9193807465d4"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="anapawcmd_8C.html#ae46e09a426696439c75f9193807465d4">ls</a> )() = <a class="el" href="anapawcmd_8C.html#aa1b0fe678837d1eec05a930d39615222">hlist</a></td></tr>
-<tr class="separator:ae46e09a426696439c75f9193807465d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56b24774d61caf62f75f90ced15a70cb"><td class="memItemLeft" align="right" valign="top">TH1 *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="anapawcmd_8C.html#a56b24774d61caf62f75f90ced15a70cb">gH1</a></td></tr>
 <tr class="separator:a56b24774d61caf62f75f90ced15a70cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbd707b9ed3a19a085b991cd94940807"><td class="memItemLeft" align="right" valign="top"><a id="adbd707b9ed3a19a085b991cd94940807" name="adbd707b9ed3a19a085b991cd94940807"></a>
@@ -241,8 +242,8 @@ void(*&#160;</td><td class="memItemRight" valign="bottom"><b>cdn</b> )() = CdNPa
 <a name="details" id="details"></a><h2 class="groupheader">詳解</h2>
 <div class="textblock"><p>ANAPAW Commands for ROOT で使える関数の定義 </p>
 <dl class="section author"><dt>著者</dt><dd>A. Kohda </dd></dl>
-<dl class="section date"><dt>日付</dt><dd>2024. 7. 8 </dd></dl>
-<dl class="section version"><dt>バージョン</dt><dd>1.12 </dd></dl>
+<dl class="section date"><dt>日付</dt><dd>2024. 7.16 </dd></dl>
+<dl class="section version"><dt>バージョン</dt><dd>1.13 </dd></dl>
 </div><h2 class="groupheader">関数詳解</h2>
 <a id="a2fd0593e9b7989c005bbb861085842f9" name="a2fd0593e9b7989c005bbb861085842f9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2fd0593e9b7989c005bbb861085842f9">&#9670;&#160;</a></span>adl()</h2>
@@ -579,7 +580,7 @@ void(*&#160;</td><td class="memItemRight" valign="bottom"><b>cdn</b> )() = CdNPa
         </tr>
       </table>
 </div><div class="memdoc">
-<p>x軸をログスケールにする <br  />
+<p>hlistへのエイリアス。ROOTファイルに含まれるヒストグラムの一覧表示 x軸をログスケールにする <br  />
  </p>
 
 </div>
@@ -767,24 +768,6 @@ void(*&#160;</td><td class="memItemRight" valign="bottom"><b>cdn</b> )() = CdNPa
       </table>
 </div><div class="memdoc">
 <p>現在表示中のヒストグラムのポインタを取得する </p>
-
-</div>
-</div>
-<a id="ae46e09a426696439c75f9193807465d4" name="ae46e09a426696439c75f9193807465d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae46e09a426696439c75f9193807465d4">&#9670;&#160;</a></span>ls</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void(* ls) () </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> = <a class="el" href="anapawcmd_8C.html#aa1b0fe678837d1eec05a930d39615222">hlist</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>hlistへのエイリアス。ROOTファイルに含まれるヒストグラムの一覧表示 </p>
 
 </div>
 </div>

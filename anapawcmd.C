@@ -2,8 +2,8 @@
 * @file
 * @brief ANAPAW Commands for ROOT で使える関数の定義
 * @author A. Kohda
-* @date 2024. 7. 8
-* @version 1.12
+* @date 2024. 7.16
+* @version 1.13
 */
 
 // グローバル変数の定義
@@ -26,7 +26,7 @@ void hlist();                // Index番号付きでヒストグラムのリス�
 /**
 * hlistへのエイリアス。ROOTファイルに含まれるヒストグラムの一覧表示
 */
-void (*ls)() = hlist;        // "hlist()"は"ls()"でも可
+//void (*ls)() = hlist;        // "hlist()"は"ls()"でも可
 //void ht(int n, TString opt); // n番目のhistをDraw (オプション指定あり)
 //void ht(TString opt);        // 現在表示されているhistのoptionを変更して再Draw
 //void hn(TString opt);        // 現在表示されているhistの次のhistを表示
@@ -175,6 +175,7 @@ void ols(){
 		else if(obj->InheritsFrom("TH1"))   { kind = '1'; }
 		else if(obj->InheritsFrom("TTree")) { kind = 'T'; }
 		else if(obj->InheritsFrom("TF1"))   { kind = 'F'; }
+		else if(obj->InheritsFrom("TGraph")){ kind = 'G'; }
 		if ( n == cidx ) { arrow = "->"; }
 		else { arrow = "  "; }
 		if (obj->InheritsFrom("TH1")){
@@ -184,6 +185,11 @@ void ols(){
 		}
 	}
 }
+void ls(){
+	ols();
+}
+
+
 
 /**
 * HIDを数値指定して、そのヒストグラムを表示(Draw)する。
@@ -907,8 +913,8 @@ void fitbierf(double xmin, double xmax){
 	fitfunc->SetParameter(4,rsigma);
 	fitfunc->SetParLimits(1,xmin,(xmax + xmin)/2);
 	fitfunc->SetParLimits(3,(xmax + xmin)/2,xmax);
-	fitfunc->SetParLimits(2,0,(xmax - xmin)/20);
-	fitfunc->SetParLimits(4,0,(xmax - xmin)/20);
+	fitfunc->SetParLimits(2,0,(xmax - xmin)/10);
+	fitfunc->SetParLimits(4,0,(xmax - xmin)/10);
 	h1->Fit("f_fit","","",xmin,xmax);
 
 	hupdate();
@@ -1059,7 +1065,17 @@ void fdump(int points=100){
 
 /*! fit出来る関数の候補を提示する(未完成) */
 void fit(TString funcname = "help", double xmin=0, double xmax=-1){
-	TString funcnamelist[] = {"gaus","gauslin","sgl","bierf"};
+	if(xmin < xmax){
+		if( funcname.EqualTo("bierf") ){
+			fitbierf(xmin,xmax);
+			return;
+		}
+	}
+	printf("  usage : fit func xmin xmax\n");
+	printf("  Function List\n");
+	printf("  g     : Gaus\n");
+	printf("  gl    : Gaus + Linior\n");
+	printf("  bierf : Window Function with Error Function edges\n");
 }
 
 
@@ -1244,6 +1260,10 @@ void multiply(int hid1, int oid2){
 		printf(" %d do not exist or not histgram\n", hid1);
 		return;
 	}
+
+	Double_t xmin = h1->GetBinLowEdge (1);
+	Double_t xmax = h1->GetBinLowEdge ( h1->GetNbinsX() +1 );
+
 	TObject* o2 = (TObject*)li->At(oid2);
 	//if(h2 == 0x0 || ! h1->InheritsFrom("TH1") ){
 	//	printf(" %d do not exist or not histgram\n", hid2);
@@ -1251,6 +1271,7 @@ void multiply(int hid1, int oid2){
 	//}
 	TH1* h1_copied = (TH1*)h1->Clone();
 	TObject* o2_copied = (TObject*)o2->Clone();
+	((TF1*)o2_copied)->SetRange(xmin,xmax);
 
 	h1_copied->Multiply((TF1*)o2_copied);
 	h1_copied->SetName(Form("h%08x",rand()));
