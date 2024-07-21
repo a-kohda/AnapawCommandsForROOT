@@ -35,7 +35,6 @@ TRint_apcr::TRint_apcr(const char *appClassName, Int_t *argc, char **argv,
 	if(p!=NULL) *(p+1)='\0';
 	//printf("dir:%s\n",path);
 
-	//TRint::ProcessLine(".L /home/kohda/.rootmacros/AnapawCommandsForROOT/anapawcmd.C");
 	TRint::ProcessLine(Form(".L %sanapawcmd.C",path));
 	TRint::ProcessLine("SetAPStyle();");
 
@@ -112,9 +111,12 @@ Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
 		IsAPcmd += tsblocks[0].EqualTo("divide");
 		IsAPcmd += tsblocks[0].EqualTo("fls");
 		IsAPcmd += tsblocks[0].EqualTo("fit");
+		IsAPcmd += tsblocks[0].EqualTo("fc");
+		IsAPcmd += tsblocks[0].EqualTo("info");
+		IsAPcmd += tsblocks[0].EqualTo("title");
 	}
 
-// 2番目以降の文字列ブロックが初めの文字がクオーテーションでなくて且つ、
+// 2番目以降の文字列ブロックが
 // 数値以外の文字を含む場合に前後にクオーテーションを付ける
 	if(IsAPcmd){
 		for(int i=1;i<tsblocks.size();i++){

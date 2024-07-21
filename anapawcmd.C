@@ -8,20 +8,22 @@
 
 // グローバル変数の定義
 TString defaultdrawopt = "colz"; 
-vector<double> gDoubleVec;
+TString gDrawOpt_TH2 = "colz"; 
+TString gDrawOpt_TH1 = ""; 
 TF1 *gFitFunction = 0x0;
 
 // 今後使う予定のグローバル変数
 TList* gObjectList = 0x0;
 TF1*   gF          = 0x0;
 TH1*   gH          = 0x0;
+TTree* gT          = 0x0;
 
 // ANAPAW準拠のユーザー用関数
 // 基本操作用の関数
 /**
 * ROOTファイルに含まれるヒストグラム等の一覧表示。行頭にヒストグラムIDも表示。
 */
-void hlist();                // Index番号付きでヒストグラムのリストを表示する
+//void hlist();                // Index番号付きでヒストグラムのリストを表示する
 
 /**
 * hlistへのエイリアス。ROOTファイルに含まれるヒストグラムの一覧表示
@@ -69,11 +71,7 @@ void CdNPad();
 /**
 * 現在表示中のヒストグラムのポインタを取得する
 */
-//TH1* gH1(){ return GetCurrentHist(true); }
-TH1* gH1;
-void SetgH1(){
-	gH1 = GetCurrentHist(true);
-}
+TH1* (&gH1) = gH;
 
 
 
@@ -90,6 +88,18 @@ TH1* GetCurrentHist(bool quiet){
 	}
 	return h1;
 }
+
+TObject* I_GetCurrentObject(bool quiet=false){
+	TObject* h1;
+	if( gPad == 0x0 ){
+		h1 = 0x0;
+		if(!quiet) fprintf(stderr, " Warning! No current Object!\n");
+	}else{
+		h1 = (TObject*)gPad->GetListOfPrimitives()->At(1);
+	}
+	return h1;
+}
+
 
 
 int GetObjID(TObject* o1){
@@ -133,30 +143,6 @@ TList* I_GetObjectList(){
 
 /// @endcond
 
-void hlist(){
-	printf("\n  ===> Histogram List\n\n");
-	printf("    HID    Kind    Title\n\n");
-
-	TList* li = GetHistList();
-	int cidx = GetObjID(GetCurrentHist(true));
-	TString arrow;
-
-	for(int n=0;n < li->GetEntries();n++){
-		char kind='S';
-		TObject* obj = li->At(n);
-		if     (obj->InheritsFrom("TH3"))   { kind = '3'; }
-		else if(obj->InheritsFrom("TH2"))   { kind = '2'; }
-		else if(obj->InheritsFrom("TH1"))   { kind = '1'; }
-		else if(obj->InheritsFrom("TTree")) { kind = 'T'; }
-		if ( n == cidx ) { arrow = "->"; }
-		else { arrow = "  "; }
-		if (obj->InheritsFrom("TH1")){
-			printf(" %s %3d    (%c)    %s\n", arrow.Data(), n, kind, obj->GetTitle());
-		}else{
-			printf(" %s %3d    (%c)    %s; %s\n", arrow.Data(), n, kind, obj->GetName(),obj->GetTitle());
-		}
-	}
-}
 
 // hlistの改良版
 void ols(){
@@ -219,7 +205,7 @@ void I_DrawFunction(TF1* f1){
 	if(gPad == 0x0) TCanvas *c1 = new TCanvas(); // キャンバスがない場合、生成
 	f1->Draw();
 
-	// 情報表示
+	// 情報表示を自力で作る
 	TPave* box =new TPave();
 	box->SetX1NDC(0.4);
 	box->SetX2NDC(0.9);
@@ -332,7 +318,7 @@ void DrawHist(TH1* h1, TString opt){
 	printf(" Draw ID:%3d  %s\n",GetObjID(h1),h1->GetTitle());
   defaultdrawopt = opt;
 
-	gH1 = h1;
+	gH = h1;
 }
 /// @endcond
 
@@ -1124,7 +1110,7 @@ void hdump2D(){
 }
 
 
-/*! TH1をTF1に変換 */
+/*! TH1をTF1に変換 (非常に個人的な用途で作ったので後で消す) */
 void htofunc(TString fname = "hfunc1");
 void htofunc(TString fname){
 	//TString fname = "hfunc1"; 
@@ -1323,19 +1309,64 @@ void subtract(int oid1, int oid2){
 	ArithmeticOperations(1, oid1, oid2);
 }
 
+/*! histgram同士の引き算 (ANAROOT準拠) */
+void sub(int oid1, int oid2){
+	subtract(oid1, oid2);
+}
+
+
 
 // 内部用関数には I_ を付ける
 TObject* I_GetPointerFromOID(int oid){
 	return 0;
 }
 
-/// @cond
-void switchAPmode(){
-	TString apmodepath = "/home/kohda/.rootmacros/AnapawCommandsForROOT/apmode";
-	TString openingfile = gDirectory->GetName();
-	if( openingfile.EqualTo("Rint") ) openingfile = "";
-	gROOT->ProcessLine(Form(".! %s %s",apmodepath.Data(),openingfile.Data()));
+/*! タイトルを変える */
+void title(TString t1, TString t2="", TString t3="", TString t4="", TString t5="", TString t6="", TString t7="", TString t8=""){
+	if( !t2.IsNull() ) t2=" "+t2;
+	if( !t3.IsNull() ) t3=" "+t3;
+	if( !t4.IsNull() ) t4=" "+t4;
+	if( !t5.IsNull() ) t5=" "+t5;
+	if( !t6.IsNull() ) t6=" "+t6;
+	if( !t7.IsNull() ) t7=" "+t7;
+	if( !t8.IsNull() ) t8=" "+t8;
+	TString t_title = t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8; // スペースは7回まで使用可
+	TObject* o1 = I_GetCurrentObject();
+	if( o1->InheritsFrom("TH1") ){
+		((TH1*)o1)->SetTitle(t_title.Data());
+		hupdate();
+	}
 }
+
+/*! ROOTファイルを開いてオブジェクトを読み込む(読取専用) (未作成) */
+void fetch(){
+	return;
+}
+
+/*! 新規作成されたオブジェクトをROOTファイルに保存する (未作成) */
+void hstore(TString fname="apcr.root"){
+	// 今開いているファイルを再度開き直して、
+	// オブジェクト数を数えて最大値以降を保存すればいい
+	TFile *f0  = gFile;
+	TFile *f01 = new TFile(gFile->GetName());
+	int num_obj = f01->GetListOfKeys()->GetSize();
+	f01->Close();
+	printf("%d\n",num_obj);
+	int num_obj_current = f0->GetListOfKeys()->GetSize();
+	printf("%d\n",num_obj_current);
+
+	TFile *f1 = new TFile(fname.Data(),"RECREATE");
+	for(int i=num_obj;i<num_obj_current;i++){
+		//f1->GetListOfKeys()->Add( gROOT->FindObject(f0->GetListOfKeys()->At(i)->GetName())  );
+		f0->Get( f0->GetListOfKeys()->At(i)->GetName() )->Write();
+	}
+	//f1->Write();
+	f0->cd();
+	return;
+}
+
+
+/// @cond
 
 void SetAPStyle(){
 	//int fontid=22; // Times系太字フォント(サイズは割合指定)
@@ -1383,6 +1414,7 @@ void SetAPStyle(){
 	gStyle->SetStatW(0.5); // Statの高さは、文字サイズと行数で自動で決まる
 	gStyle->SetStatH(0.11); // px指定フォントの場合は影響されない?	
 	gStyle->SetTitleY(0.95);
+	//gStyle->SetOptTitle(0); // デフォルトのタイトル描画機能を使わない
 }
 
 
