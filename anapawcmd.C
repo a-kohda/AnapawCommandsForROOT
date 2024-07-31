@@ -304,10 +304,16 @@ void DrawHist(TH1* h1, TString opt){
 	tfilename->SetNDC(1);
 	tfilename->SetTextAlign(11);
 	tfilename->Draw();
+
 	TText *t_hid = new TText(0.90,0.05,Form("Histogram ID = %d",GetObjID(h1)));
 	t_hid->SetNDC(1);
 	t_hid->SetTextAlign(32);
 	t_hid->Draw();
+
+	TLatex *t_xtitle = new TLatex(0.50,0.05,h1->GetXaxis()->GetTitle());
+	t_xtitle->SetNDC(1);
+	t_xtitle->SetTextAlign(22);
+	t_xtitle->Draw();
 
 	TDatime *currenttime = new TDatime();
 	TText *tdatetime = new TText(0.99,0.99,currenttime->AsSQLString() );
@@ -1188,12 +1194,19 @@ void divide(int hid1, int hid2, int err_type=-1){
 		printf("  1 : Error Propagation from input histograms.\n");
 		printf("  2 : Binomial distribution.\n");
 		printf("  3 : Binomial distribution with Laplace correction.\n");
+		printf("  4 : 3 and effect from neighboring bins.\n");
 		printf("> ");
 		scanf("%d",&err_type);
 	}
-	if(err_type<0 || 3<err_type){
+	if(err_type<0 || 4<err_type){
 		printf("Error type is wrong.\n");
 		return;
+	}
+
+	bool IsNeighboringCorrection = false; // 隣接するビンによる誤差の影響を含めるか
+	if(err_type == 4){
+		IsNeighboringCorrection = true;
+		err_type = 3;
 	}
 
 	if(err_type==1){
@@ -1206,9 +1219,11 @@ void divide(int hid1, int hid2, int err_type=-1){
 		for(int i=0;i<fNcells;i++){
 			double n1 = h1_copied->GetBinContent(i);
 			if(n1<1) continue;
-			h1_copied->Fill(h1_copied->GetBinCenter(i));
-			h2_copied->Fill(h2_copied->GetBinCenter(i));
-			h2_copied->Fill(h2_copied->GetBinCenter(i));
+			//h1_copied->Fill(h1_copied->GetBinCenter(i));
+			//h2_copied->Fill(h2_copied->GetBinCenter(i));
+			//h2_copied->Fill(h2_copied->GetBinCenter(i));
+			h1_copied->SetBinContent(i, h1_copied->GetBinContent(i) +1);
+			h2_copied->SetBinContent(i, h2_copied->GetBinContent(i) +2);
 		}
 	}
 
@@ -1225,9 +1240,61 @@ void divide(int hid1, int hid2, int err_type=-1){
 		}
 		h1_copied->SetError(error);
 	}
-
-
 	h2_copied->Delete();
+
+	if(IsNeighboringCorrection /*&& h1_copied->InheritsFrom("TH2")*/ ){ // 近隣の影響を考慮
+		TGraph*   g_ue   = new TGraph(); // error of upper limit 
+		TGraph*   g_le   = new TGraph(); // error of lower limit 
+		TGraph2D* g_ue2d = new TGraph2D(); // error of upper limit 
+		TGraph2D* g_le2d = new TGraph2D(); // error of lower limit 
+
+		int fNcells = h1_copied->GetNcells();
+		for(int i=0;i<fNcells;i++){
+			double content = h1_copied->GetBinContent(i);
+			double error   = h1_copied->GetBinError(i);
+			if(content < 1e-6 && error < 1e-6) continue;
+			Int_t binx, biny, binz;
+			double x, y, z;
+			h1_copied->GetBinXYZ(i, binx, biny, binz);
+			x = h1_copied->GetXaxis()->GetBinCenter(binx);
+			y = h1_copied->GetYaxis()->GetBinCenter(biny);
+
+			if( !h1_copied->InheritsFrom("TH2") && binx>0 ){ // TH1の場合
+				g_ue->SetPoint(g_ue->GetN(),x,content+error);
+				g_le->SetPoint(g_le->GetN(),x,content-error);
+			}
+			
+		}
+		for(int i=0;i<fNcells;i++){
+			double content = h1_copied->GetBinContent(i);
+			if( !h1_copied->InheritsFrom("TH2") ){ // TH1の場合
+				double xmin_inbin = h1_copied->GetBinLowEdge(i);
+				double xmax_inbin = h1_copied->GetBinLowEdge(i+1);
+				double ymin_inbin, ymax_inbin;
+				if( g_ue->Eval(xmin_inbin) > g_ue->Eval(xmax_inbin) ){
+					ymax_inbin = g_ue->Eval(xmin_inbin);
+				}else{
+					ymax_inbin = g_ue->Eval(xmax_inbin);
+				}
+				if( g_le->Eval(xmin_inbin) > g_le->Eval(xmax_inbin) ){
+					ymin_inbin = g_le->Eval(xmax_inbin);
+				}else{
+					ymin_inbin = g_le->Eval(xmin_inbin);
+				}
+				double newerr;
+				if( ymax_inbin - content > content - ymin_inbin ){
+					newerr = ymax_inbin - content;
+				}else{
+					newerr = content - ymin_inbin;
+				}
+				h1_copied->SetBinError(i,newerr);
+
+			}
+		}
+		g_ue->Delete();
+		g_le->Delete();
+	}
+
 
 	h1_copied->SetName(Form("h%08x",rand()));
 	h1_copied->SetTitle(Form("h%d / h%d",hid1, hid2) );
@@ -1347,6 +1414,7 @@ void fetch(){
 void hstore(TString fname="apcr.root"){
 	// 今開いているファイルを再度開き直して、
 	// オブジェクト数を数えて最大値以降を保存すればいい
+	TList* li = I_GetObjectList();
 	TFile *f0  = gFile;
 	TFile *f01 = new TFile(gFile->GetName());
 	int num_obj = f01->GetListOfKeys()->GetSize();
@@ -1358,7 +1426,16 @@ void hstore(TString fname="apcr.root"){
 	TFile *f1 = new TFile(fname.Data(),"RECREATE");
 	for(int i=num_obj;i<num_obj_current;i++){
 		//f1->GetListOfKeys()->Add( gROOT->FindObject(f0->GetListOfKeys()->At(i)->GetName())  );
-		f0->Get( f0->GetListOfKeys()->At(i)->GetName() )->Write();
+		//printf("AA1\n");sleep(1);
+		//TObject *o1 = f0->Get( f0->GetListOfKeys()->At(i)->GetName() );
+		TObject *o1 = (TObject*)li->At(i);
+		//printf("AA2\n");sleep(1);
+		f1->Add( o1 );
+		
+		//printf("AA3\n");sleep(1);
+		//f0->Get( f0->GetListOfKeys()->At(i)->GetName() )->Write();
+		o1->Write();
+		//printf("BB\n");;sleep(1);
 	}
 	//f1->Write();
 	f0->cd();
@@ -1415,6 +1492,7 @@ void SetAPStyle(){
 	gStyle->SetStatH(0.11); // px指定フォントの場合は影響されない?	
 	gStyle->SetTitleY(0.95);
 	//gStyle->SetOptTitle(0); // デフォルトのタイトル描画機能を使わない
+	gStyle->SetTitleXOffset(1000); // デフォルトのx軸タイトル描画機能を使わない
 }
 
 
