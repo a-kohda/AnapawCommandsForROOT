@@ -1442,6 +1442,47 @@ void hstore(TString fname="apcr.root"){
 	return;
 }
 
+void APCR_I_SetStatHeight(double val1 =-1){
+	if(val1<0){
+		printf("  usage : set stat height value(0.0-1.0)\n");
+		return;
+	}
+	((TPaveStats*)GetCurrentHist()->FindObject("stats"))->SetY1NDC(0.9-val1); // 暫定的
+	hupdate();
+	return;
+}
+
+void APCR_I_SetStatWidth(double val1 =-1){
+	if(val1<0){
+		printf("  usage : set stat width value(0.0-1.0)\n");
+		return;
+	}
+	((TPaveStats*)GetCurrentHist()->FindObject("stats"))->SetX1NDC(0.9-val1); // 暫定的
+	hupdate();
+	return;
+}
+
+
+void APCR_I_SetStat(TString opt2="", double val1 =-1, double val2 =-1){
+	bool noinput = opt2.IsWhitespace();
+	if( !noinput && ((TString)"height").BeginsWith(opt2) ){ APCR_I_SetStatHeight(val1); return; }
+	if( !noinput && ((TString)"width").BeginsWith(opt2) ) { APCR_I_SetStatWidth(val1); return; }
+	printf("  usage : set stat option2 value1 (value2)\n");
+	printf("  Option2 List\n");
+	printf("  height  : set stat box height\n");
+	printf("  width   : set stat box width\n");
+}
+
+/*! あらゆる設定 */
+void APCR_set(TString opt1="", TString opt2="", double val1 =-1, double val2 =-1){
+	bool noinput = opt1.IsWhitespace();
+	if( !noinput && ((TString)"stat").BeginsWith(opt1) ){ APCR_I_SetStat(opt2, val1, val2); return; }
+	printf("  usage : set option1 option2 value1 (value2)\n");
+	printf("  Option1 List\n");
+	printf("  stat  : stat box\n");
+
+
+}
 
 /// @cond
 
