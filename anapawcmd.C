@@ -623,6 +623,13 @@ void size(float w, float h){ // デフォルトのサイズに対する比率で
 	gPad->GetCanvas()->SetWindowSize (w * defw + difw, h * defh + difh);
 }
 
+
+void APCR_zonesize(int x, int y){
+	zone(x,y);
+	size( (float)x , (float)y );
+}
+
+
 void figali(float xmin, float xmax, 
 		bool oldel =true, bool print = true, int kreturn =0, 
 		TH1* ihist = 0x0 ){
@@ -678,6 +685,7 @@ void figali(float xmin, float xmax,
 	fit1->SetParameter(0,h1->GetBinContent(h1->GetMaximumBin()));
 	fit1->SetParameter(1,h1->GetBinCenter(h1->GetMaximumBin()));
 	fit1->SetParameter(2,(xmax - xmin)/10 );
+	fit1->SetNpx(1000); // 描画時の点数
 
 	float tempx1 = xmin;
 	float tempy1 = h1->GetBinContent(h1->FindBin(xmin));
@@ -731,17 +739,17 @@ void figali(float xmin, float xmax,
 
 	float integral      = h1->Integral(startbin,endbin);
 	float integralerr   = TMath::Sqrt(integral);
-	float background    = fli->Integral(startval,endval)/5.; // 要改善
+	float background    = fli->Integral(startval,endval) / h1->GetBinWidth(0) ; // 改善済 (2024/11/18)
 	float backgrounderr = TMath::Sqrt(background);
 	float calcedpeak    = integral - background;
 	float calcedpeakerr = TMath::Sqrt(integral + background);
 
 	if(print){
 		printf("\n");
-		printf("Center   : %#8g\n", fit1->GetParameter(1));
-		printf("Sigma    : %#8g\n", TMath::Abs(fit1->GetParameter(2)));
+		printf("Center   : %#8g  +-  %#8g\n", fit1->GetParameter(1), fit1->GetParError(1) );
+		printf("Sigma    : %#8g  +-  %#8g\n", TMath::Abs(fit1->GetParameter(2)), fit1->GetParError(2) );
 		printf("Integral : %#8g  +-  %#8g\n", integral, integralerr );
-		printf("CalcInte : %#8g\n", fit1->Integral(startval,endval)/5.); // 要改善
+		printf("CalcInte : %#8g\n", fit1->Integral(startval,endval) / h1->GetBinWidth(0) ); // 改善済 (2024/11/18)
 		printf("B.G.     : %#8g  +-  %#8g\n", background, backgrounderr); 
 		printf("Int - BG : %#8g  +-  %#8g\n", calcedpeak, calcedpeakerr); 
 
@@ -778,13 +786,13 @@ void figali(float xmin, float xmax,
 	pt1->SetFillStyle(0);
 	pt2->SetFillStyle(0);
 	pt1->AddText("Center");
-		pt2->AddText(Form("%#8g", fit1->GetParameter(1)));
+		pt2->AddText(Form("%#8g #pm %#8g", fit1->GetParameter(1), fit1->GetParError(1) ));
 	pt1->AddText("Sigma");
-		pt2->AddText(Form("%#8g", TMath::Abs(fit1->GetParameter(2))));
+		pt2->AddText(Form("%#8g #pm %#8g", TMath::Abs(fit1->GetParameter(2)), fit1->GetParError(2) ));
 	pt1->AddText("Integral");
 		pt2->AddText(Form("%#8g #pm %#8g", integral, integralerr));
 	pt1->AddText("CalcInte");
-		pt2->AddText(Form("%#8g", fit1->Integral(startval,endval)/5.)); // 要改善
+		pt2->AddText(Form("%#8g", fit1->Integral(startval,endval) / h1->GetBinWidth(0) )); // 改善済 (2024/11/18)
 	pt1->AddText("B.G.");
 		pt2->AddText(Form("%#8g #pm %#8g", background, backgrounderr));
 	pt1->AddText("Int - BG");
@@ -792,6 +800,45 @@ void figali(float xmin, float xmax,
 	pt1->Draw();
 	pt2->Draw();
 }
+
+void APCR_G_anacutrange(double xmin, double xmax){
+	TH1D* h1 = (TH1D*)GetCurrentHist();
+	if( h1==0x0 ) { return; }
+
+	TF1* fli = (TF1*)gROOT->FindObject("fli"); // BG 直線の式
+	double func_xmin = fli->GetMinimumX();
+	double func_xmax = fli->GetMaximumX();
+
+	printf("Func Range               : %#8g to %#8g\n\n", func_xmin, func_xmax);
+
+	double integral_val[2], integral_err[2];
+	for(int i=0; i<2; i++){
+		TString  t1 = " Cut Range";
+		if(i==1) t1 = "Func Range";
+		if(i==1){ xmin = func_xmin; xmax = func_xmax; }
+		int xbinmin    = h1->FindBin(xmin);
+		int xbinmax    = h1->FindBin(xmax);		
+		double xvalmin = h1->GetBinLowEdge(xbinmin);
+		double xvalmax = h1->GetBinLowEdge(xbinmax+1);
+		double hist_inte_in_range_val = h1->Integral(xbinmin, xbinmax);
+		double hist_inte_in_range_err = TMath::Sqrt(hist_inte_in_range_val); // 重み付きでないhistにのみ有効
+		double func_inte_in_range_val = fli->Integral(xvalmin, xvalmax);
+		double func_inte_in_range_err = TMath::Sqrt(func_inte_in_range_val);
+		double peak_inte_in_range_val = hist_inte_in_range_val - func_inte_in_range_val;
+		double peak_inte_in_range_err = TMath::Sqrt( hist_inte_in_range_err*hist_inte_in_range_err + func_inte_in_range_err*func_inte_in_range_err );
+		printf("Hist Integral %s : %#8g +- %#8g\n", t1.Data(), hist_inte_in_range_val, hist_inte_in_range_err);
+		printf("Func BG Integ %s : %#8g +- %#8g\n", t1.Data(), func_inte_in_range_val, func_inte_in_range_err);
+		printf("Peak Integral %s : %#8g +- %#8g\n", t1.Data(), peak_inte_in_range_val, peak_inte_in_range_err);
+		integral_val[i] = peak_inte_in_range_val;
+		integral_err[i] = peak_inte_in_range_err;
+		printf("\n");
+	}
+	printf("Cut Peak / Total Peak    : %#8g +- %#8g %%\n", integral_val[0]/integral_val[1]*100,
+		integral_val[0]/integral_val[1]*100 * TMath::Sqrt( (integral_err[0]/integral_val[0])*(integral_err[0]/integral_val[0]) + (integral_err[1]/integral_val[1])*(integral_err[1]/integral_val[1]) ) );
+
+
+}
+
 
 // copy from https://root-forum.cern.ch/t/how-to-fit-a-skew-gaussian/50922
 //double skewedgauss(double * x, double *p) {
@@ -1202,6 +1249,7 @@ void divide(int hid1, int hid2, int err_type=-1){
 		printf("Error type is wrong.\n");
 		return;
 	}
+	int initial_err_type = err_type;
 
 	bool IsNeighboringCorrection = false; // 隣接するビンによる誤差の影響を含めるか
 	if(err_type == 4){
@@ -1218,7 +1266,7 @@ void divide(int hid1, int hid2, int err_type=-1){
 		int fNcells = h1_copied->GetNcells();
 		for(int i=0;i<fNcells;i++){
 			double n1 = h1_copied->GetBinContent(i);
-			if(n1<1) continue;
+			//if(n1<1) continue;
 			//h1_copied->Fill(h1_copied->GetBinCenter(i));
 			//h2_copied->Fill(h2_copied->GetBinCenter(i));
 			//h2_copied->Fill(h2_copied->GetBinCenter(i));
@@ -1297,7 +1345,7 @@ void divide(int hid1, int hid2, int err_type=-1){
 
 
 	h1_copied->SetName(Form("h%08x",rand()));
-	h1_copied->SetTitle(Form("h%d / h%d",hid1, hid2) );
+	h1_copied->SetTitle(Form("h%d / h%d (err mode %d)",hid1, hid2, initial_err_type) );
 	gDirectory->GetListOfKeys()->AddLast(h1_copied);
 	DrawHist(h1_copied);
 	hupdate();
@@ -1536,6 +1584,35 @@ void SetAPStyle(){
 	gStyle->SetTitleXOffset(1000); // デフォルトのx軸タイトル描画機能を使わない
 }
 
-
+// 以下は自分用のstyle設定
+void SetSlideStyle(){
+	gPad->GetCanvas()->SetWindowSize (600 + 2, 600+ 24);
+	int linewidth =3;
+	gPad->SetFrameLineWidth(linewidth);
+	gStyle->SetLineWidth(linewidth);
+	gPad->SetMargin(0.1,0.1,0.1,0.1);
+	TH1* h1 = (TH1*)GetCurrentHist();	
+	h1->Draw();
+	h1->SetTitle(";;;");
+	h1->SetStats(0);
+	int fontid=63;
+	float fsize = 28; // フォントサイズ(px)
+	h1->SetLabelFont(fontid,"XYZ");
+	h1->SetLabelFont(fontid,"");
+	h1->SetLabelSize(fsize,"XYZ");
+	h1->SetLabelSize(fsize,"");
+	h1->SetLabelOffset (0.01,"XY");
+	gPad->SetGrid(0,0);
+	gPad->SetTicks();
+	h1->GetXaxis()->SetNdivisions(7);
+	h1->GetYaxis()->SetNdivisions(7);
+	h1->SetLineWidth(linewidth);
+	h1->SetFillStyle(0);
+	h1->SetLineColor(0);
+	h1->SetLineColor(1);
+	gPad->Modified();
+	gPad->Update();
+	gPad->Modified();
+}
 /// @endcond
 

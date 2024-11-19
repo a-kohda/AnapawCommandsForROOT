@@ -115,6 +115,7 @@ Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
 		IsAPcmd += tsblocks[0].EqualTo("info");
 		IsAPcmd += tsblocks[0].EqualTo("title");
 		IsAPcmd += tsblocks[0].EqualTo("set");
+		IsAPcmd += tsblocks[0].EqualTo("zonesize");
 	}
 
 // 2番目以降の文字列ブロックが
@@ -132,7 +133,7 @@ Long_t TRint_apcr::ProcessLine(const char *line, Bool_t sync, Int_t *err){
 	if(tsblocks.size()>=1 && IsAPcmd ){
 		TString tstemp2;
 		tstemp2 = tsblocks[0];
-		if( tsblocks[0].EqualTo("set") ) tstemp2 = "APCR_" + tsblocks[0];
+		if( tsblocks[0].EqualTo("set") || tsblocks[0].EqualTo("zonesize") ) tstemp2 = "APCR_" + tsblocks[0];
 		tstemp2 += "(";
 		for(int i=0;i<tsblocks.size()-1; i++){
 			if(i>0)tstemp2 += ",";
